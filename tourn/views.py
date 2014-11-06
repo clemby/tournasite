@@ -1,61 +1,51 @@
-from django.http import HttpResponse
-from django.views.decorators.csrf import csrf_exempt
-from rest_framework.renderers import JSONRenderer
-from rest_framework.parsers import JSONParser
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 from tourn.models import Team
 from tourn.serializers import TeamSerializer
 
 
-class JSONResponse(HttpResponse):
-    """An HttpResponse which renders its content into JSON."""
-    def __init__(self, data, **kwargs):
-        content = JSONRenderer().render(data)
-        kwargs['content_type'] = 'application/json'
-        super(JSONResponse, self).__init__(content, **kwargs)
-
-
-@csrf_exempt
+@api_view(['GET', 'POST'])
 def team_list(request):
     """List all teams, or create a new one."""
     if request.method == 'GET':
         teams = Team.objects.all()
         serializer = TeamSerializer(teams, many=True)
-        return JSONResponse(serializer.data)
+        return Response(serializer.data)
 
     elif request.method == 'POST':
-        data = JSONParser().parse(request)
-        serializer = TeamSerializer(data=data)
+        serializer = TeamSerializer(data=request.data)
 
         if not serializer.is_valid():
-            return JSONResponse(serializer.errors, status=400)
+            return Response(serializer.errors, status=400)
 
         serializer.save()
-        return JSONResponse(serializer.data, status=201)
+        return Response(serializer.data, status=201)
 
 
-@csrf_exempt
+@api_view(['GET', 'PUT', 'DELETE'])
 def team_detail(request, pk):
     """Retrieve, update or delete a team."""
     try:
         team = Team.objects.get(pk=pk)
     except Team.DoesNotExist:
-        return HttpResponse(status=404)
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
     if request.method == 'GET':
         serializer = TeamSerializer(team)
-        return JSONResponse(serializer.data)
+        return Response(serializer.data)
 
     if request.method == 'PUT':
-        data = JSONParser().parse(request)
-        serializer = TeamSerializer(team, data=data)
+        serializer = TeamSerializer(team, data=request.DATA)
 
         if not serializer.is_valid():
-            return JSONResponse(serializer.errors, status=400)
+            return Response(serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
 
         serializer.save()
-        return JSONResponse(serializer.data)
+        return Response(serializer.data)
 
     if request.method == 'DELETE':
         team.delete()
-        return HttpResponse(status=204)
+        return Response(status=status.HTTP_204_NO_CONTENT)
