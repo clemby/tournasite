@@ -7,7 +7,7 @@ from tourn.serializers import TeamSerializer
 
 
 @api_view(['GET', 'POST'])
-def team_list(request):
+def team_list(request, format=None):
     """List all teams, or create a new one."""
     if request.method == 'GET':
         teams = Team.objects.all()
@@ -25,7 +25,7 @@ def team_list(request):
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
-def team_detail(request, pk):
+def team_detail(request, pk, format=None):
     """Retrieve, update or delete a team."""
     try:
         team = Team.objects.get(pk=pk)
