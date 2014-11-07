@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 class Team(models.Model):
     name = models.CharField(max_length=40, blank=False)
     members = models.ManyToManyField(User, related_name='teams', null=False)
+    creator = models.ForeignKey(User, related_name='created_teams')
 
     class Meta:
         ordering = ('name',)
