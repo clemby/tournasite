@@ -1,42 +1,46 @@
+from django.http import Http404
+
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import APIView
 from rest_framework.response import Response
 
 from tourn.models import Team
 from tourn.serializers import TeamSerializer
 
 
-@api_view(['GET', 'POST'])
-def team_list(request, format=None):
+class TeamList(APIView):
     """List all teams, or create a new one."""
-    if request.method == 'GET':
+    def get(self, request, format=None):
         teams = Team.objects.all()
         serializer = TeamSerializer(teams, many=True)
         return Response(serializer.data)
 
-    elif request.method == 'POST':
-        serializer = TeamSerializer(data=request.data)
+    def post(self, request, format=None):
+        serializer = TeamSerializer(data=request.DATA)
 
         if not serializer.is_valid():
-            return Response(serializer.errors, status=400)
+            return Response(serializer.errors,
+                            status=status.HTTP_400_BAD_REQUEST)
 
         serializer.save()
-        return Response(serializer.data, status=201)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
-def team_detail(request, pk, format=None):
+class TeamDetail(APIView):
     """Retrieve, update or delete a team."""
-    try:
-        team = Team.objects.get(pk=pk)
-    except Team.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+    def get_object(self, pk):
+        try:
+            return Team.objects.get(pk=pk)
+        except Team.DoesNotExist:
+            raise Http404
 
-    if request.method == 'GET':
+    def get(self, request, pk, format=None):
+        team = self.get_object(pk)
         serializer = TeamSerializer(team)
         return Response(serializer.data)
 
-    if request.method == 'PUT':
+    def put(self, request, pk, format=None):
+        team = self.get_object(pk)
         serializer = TeamSerializer(team, data=request.DATA)
 
         if not serializer.is_valid():
@@ -44,8 +48,9 @@ def team_detail(request, pk, format=None):
                             status=status.HTTP_400_BAD_REQUEST)
 
         serializer.save()
-        return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    if request.method == 'DELETE':
+    def delete(self, request, pk, format=None):
+        team = self.get_object(pk)
         team.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
