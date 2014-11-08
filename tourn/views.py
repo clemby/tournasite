@@ -3,8 +3,17 @@ from django.db.models import Count
 
 from rest_framework import permissions, viewsets
 
-from .models import Team, Match
-from .serializers import TeamSerializer, UserSerializer, MatchSerializer
+from .models import (
+    Team,
+    Match,
+    Tournament,
+)
+from .serializers import (
+    TeamSerializer,
+    UserSerializer,
+    MatchSerializer,
+    TournamentSerializer,
+)
 
 
 class TeamViewSet(viewsets.ModelViewSet):
@@ -29,4 +38,10 @@ class PlayerViewSet(viewsets.ReadOnlyModelViewSet):
 class MatchViewSet(viewsets.ModelViewSet):
     queryset = Match.objects.all()
     serializer_class = MatchSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+
+class TournamentViewSet(viewsets.ModelViewSet):
+    queryset = Tournament.objects.all()
+    serializer_class = TournamentSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)

@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404
 
 from rest_framework import serializers
 
-from tourn.models import Team, Match
+from tourn.models import Team, Match, Tournament
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -52,3 +52,23 @@ class MatchSerializer(serializers.ModelSerializer):
         fields = ('name', 'id', 'teams',)
 
     name = serializers.CharField(max_length=40, required=False)
+
+
+class MatchNameSerializer(serializers.RelatedField):
+    read_only = True
+
+    def to_native(self, match):
+        return match.name
+
+
+class TournamentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tournament
+        fields = ('name', 'id', 'min_team_size', 'max_team_size',
+                  'min_teams_per_match', 'max_teams_per_match', 'matches')
+
+    min_team_size = serializers.IntegerField(default=2, min_value=1)
+    max_team_size = serializers.IntegerField(default=2, min_value=1)
+
+    min_teams_per_match = serializers.IntegerField(default=2, min_value=1)
+    max_teams_per_match = serializers.IntegerField(default=2, min_value=1)
