@@ -11,6 +11,9 @@ urlpatterns = patterns(
 
     url(r'players/$', views.PlayerList.as_view()),
     url(r'players/(?P<pk>[0-9]+)/$', views.PlayerDetail.as_view()),
+
+    url(r'matches/$', views.MatchList.as_view()),
+    url(r'matches/(?P<pk>[0-9]+)/$', views.MatchDetail.as_view()),
 )
 
 

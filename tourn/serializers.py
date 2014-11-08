@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404
 
 from rest_framework import serializers
 
-from tourn.models import Team
+from tourn.models import Team, Match
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -16,7 +16,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class UsernameSerializer(serializers.RelatedField):
-    """Serializes User objects as their username."""
+    """Serializes User instances as their username."""
     read_only = False
 
     def to_native(self, user):
@@ -33,3 +33,22 @@ class TeamSerializer(serializers.ModelSerializer):
 
     creator = serializers.Field(source='creator.username')
     members = UsernameSerializer(many=True)
+
+
+class TeamNameSerializer(serializers.RelatedField):
+    """Serializes Team instances as their name."""
+    read_only = False
+
+    def to_native(self, team):
+        return team.name
+
+    def from_native(self, data):
+        return get_object_or_404(Team, name=data)
+
+
+class MatchSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Match
+        fields = ('name', 'id', 'teams',)
+
+    name = serializers.CharField(max_length=40, required=False)
