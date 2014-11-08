@@ -1,13 +1,13 @@
 from django.contrib.auth.models import User
 from django.db.models import Count
 
-from rest_framework import generics, permissions
+from rest_framework import permissions, viewsets
 
 from .models import Team, Match
 from .serializers import TeamSerializer, UserSerializer, MatchSerializer
 
 
-class TeamBase:
+class TeamViewSet(viewsets.ModelViewSet):
     queryset = Team.objects.all()
     serializer_class = TeamSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
@@ -16,15 +16,7 @@ class TeamBase:
         obj.creator = self.request.user
 
 
-class TeamList(TeamBase, generics.ListCreateAPIView):
-    pass
-
-
-class TeamDetail(TeamBase, generics.RetrieveUpdateDestroyAPIView):
-    pass
-
-
-class PlayerBase:
+class PlayerViewSet(viewsets.ReadOnlyModelViewSet):
     # Players will be users with at least one team.
     queryset = User.objects.annotate(
         num_teams=Count('teams')
@@ -34,23 +26,7 @@ class PlayerBase:
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 
-class PlayerList(PlayerBase, generics.ListCreateAPIView):
-    pass
-
-
-class PlayerDetail(PlayerBase, generics.RetrieveUpdateDestroyAPIView):
-    pass
-
-
-class MatchBase:
+class MatchViewSet(viewsets.ModelViewSet):
     queryset = Match.objects.all()
     serializer_class = MatchSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
-
-
-class MatchList(MatchBase, generics.ListCreateAPIView):
-    pass
-
-
-class MatchDetail(MatchBase, generics.RetrieveUpdateDestroyAPIView):
-    pass
