@@ -4,13 +4,12 @@ from django.contrib.auth.models import User
 
 class Team(models.Model):
     name = models.CharField(max_length=40, blank=False)
-    members = models.ManyToManyField(User, related_name='teams')
     creator = models.ForeignKey(User, related_name='created_teams')
 
     class Meta:
         ordering = ('name',)
 
-    def unicode(self):
+    def __unicode__(self):
         return unicode(self.__str__())
 
     def __str__(self):
@@ -26,11 +25,16 @@ class Tournament(models.Model):
     min_teams_per_match = models.SmallIntegerField(default=2)
     max_teams_per_match = models.SmallIntegerField(default=2)
 
-    def unicode(self):
+    def __unicode__(self):
         return unicode(self.__str__())
 
     def __str__(self):
         return self.name
+
+
+class TournamentMembers(models.Model):
+    tournament = models.ForeignKey(Tournament, related_name='+')
+    players = models.ManyToManyField(User, related_name='memberships')
 
 
 class Match(models.Model):
@@ -39,7 +43,7 @@ class Match(models.Model):
     winner = models.ForeignKey(Team, related_name='victories', null=True)
     tournament = models.ForeignKey(Tournament, related_name='matches')
 
-    def unicode(self):
+    def __unicode__(self):
         return unicode(self.__str__())
 
     def __str__(self):

@@ -12,7 +12,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('username', 'id', 'teams')
+        fields = ('username', 'id')
 
 
 class UsernameSerializer(serializers.RelatedField):
@@ -29,10 +29,9 @@ class UsernameSerializer(serializers.RelatedField):
 class TeamSerializer(serializers.ModelSerializer):
     class Meta:
         model = Team
-        fields = ('name', 'members', 'id', 'creator')
+        fields = ('name', 'id', 'creator')
 
     creator = serializers.Field(source='creator.username')
-    members = UsernameSerializer(many=True)
 
 
 class TeamNameSerializer(serializers.RelatedField):

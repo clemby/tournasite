@@ -1,6 +1,3 @@
-from django.contrib.auth.models import User
-from django.db.models import Count
-
 from rest_framework import permissions, viewsets
 
 from .models import (
@@ -26,11 +23,6 @@ class TeamViewSet(viewsets.ModelViewSet):
 
 
 class PlayerViewSet(viewsets.ReadOnlyModelViewSet):
-    # Players will be users with at least one team.
-    queryset = User.objects.annotate(
-        num_teams=Count('teams')
-    ).filter(num_teams__gt=0)
-
     serializer_class = UserSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
