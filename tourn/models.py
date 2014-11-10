@@ -2,20 +2,6 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
-class Team(models.Model):
-    name = models.CharField(max_length=40, blank=False)
-    creator = models.ForeignKey(User, related_name='created_teams')
-
-    class Meta:
-        ordering = ('name',)
-
-    def __unicode__(self):
-        return unicode(self.__str__())
-
-    def __str__(self):
-        return self.name
-
-
 class Tournament(models.Model):
     name = models.CharField(max_length=60, blank=True)
 
@@ -32,9 +18,29 @@ class Tournament(models.Model):
         return self.name
 
 
-class TournamentMembers(models.Model):
-    tournament = models.ForeignKey(Tournament, related_name='+')
+class Team(models.Model):
+    name = models.CharField(max_length=40, blank=False, unique=True)
+    creator = models.ForeignKey(User, related_name='created_teams')
+
+    class Meta:
+        ordering = ('name',)
+
+    def __unicode__(self):
+        return unicode(self.__str__())
+
+    def __str__(self):
+        return self.name
+
+
+class TeamTournamentMembership(models.Model):
+    """
+    Membership of a team, for a single tournament.
+
+    Team membership differs between tournaments.
+    """
+    tournament = models.ForeignKey(Tournament, related_name='team_memberships')
     players = models.ManyToManyField(User, related_name='memberships')
+    team = models.ForeignKey(Team, related_name='memberships')
 
 
 class Match(models.Model):
