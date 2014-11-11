@@ -26,12 +26,24 @@ class UsernameSerializer(serializers.RelatedField):
         return get_object_or_404(User, username=data)
 
 
+class CurrentMembersField(serializers.Field):
+    read_only = True
+
+    def field_to_native(self, obj, field_name):
+        queryset = obj.get_current_members()
+        if not queryset:
+            return []
+        return [tup[0] for tup in queryset.values_list('username')]
+
+
 class TeamSerializer(serializers.ModelSerializer):
+    """Serialize a team, with entries intact."""
     class Meta:
         model = Team
-        fields = ('name', 'id', 'creator')
+        fields = ('name', 'id', 'creator', 'entries', 'current_members')
 
     creator = serializers.Field(source='creator.username')
+    current_members = CurrentMembersField()
 
 
 class TeamNameSerializer(serializers.RelatedField):

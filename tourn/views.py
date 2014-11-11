@@ -28,8 +28,8 @@ class TeamViewSet(viewsets.ModelViewSet):
 class PlayerViewSet(viewsets.ReadOnlyModelViewSet):
     # Players will be users with at least one team.
     queryset = User.objects.annotate(
-        num_memberships=Count('memberships')
-    ).filter(num_memberships__gt=0)
+        num_entries=Count('tournament_entries')
+    ).filter(num_entries__gt=0)
 
     serializer_class = UserSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
