@@ -84,7 +84,7 @@ class Match(models.Model):
         return unicode(self.__str__())
 
     def __str__(self):
-        return self.name
+        return '{}: {}'.format(self.tournament.name, self.name)
 
     def set_winner(self, winning_team):
         if winning_team not in self.teams:
