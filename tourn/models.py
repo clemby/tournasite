@@ -53,7 +53,7 @@ class Tournament(models.Model):
         return self.name
 
     @property
-    def is_1v1(self):
+    def is_ffa(self):
         return self.max_team_size == 1
 
     @property
