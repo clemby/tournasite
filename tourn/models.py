@@ -22,7 +22,7 @@ class Tournament(models.Model):
             planned_start__gte=timezone.now()
         )
 
-        if future_tournaments.count():
+        if future_tournaments.exists():
             start = future_tournaments.aggregate(models.Min('planned_start'))
         else:
             start = cls.objects.exclude(
@@ -64,6 +64,7 @@ class Tournament(models.Model):
 class Team(models.Model):
     name = models.CharField(max_length=40, blank=False, unique=True)
     creator = models.ForeignKey(User, related_name='created_teams')
+    admins = models.ManyToManyField(User, related_name='administered_teams')
 
     class Meta:
         ordering = ('name',)
@@ -81,6 +82,13 @@ class Team(models.Model):
         except TeamEntry.DoesNotExist:
             return []
         return entry.players
+
+    def is_admin(self, user):
+        try:
+            self.admins.get(pk=user.pk)
+        except:
+            return False
+        return True
 
 
 class TeamEntry(models.Model):
