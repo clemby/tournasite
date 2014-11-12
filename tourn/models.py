@@ -1,3 +1,4 @@
+from django.http import Http404
 from django.utils import timezone
 from django.db import models
 from django.contrib.auth.models import User
@@ -15,12 +16,6 @@ class Tournament(models.Model):
     planned_start = models.DateTimeField()
     planned_finish = models.DateTimeField(null=True)
 
-    def __unicode__(self):
-        return unicode(self.__str__())
-
-    def __str__(self):
-        return self.name
-
     @classmethod
     def get_current(cls):
         future_tournaments = cls.objects.filter(
@@ -36,9 +31,34 @@ class Tournament(models.Model):
                 models.Max('planned_start')
             )
 
+        if not start:
+            return None
+
         start = start.values()[0]
 
         return cls.objects.filter(planned_start=start).first()
+
+    @classmethod
+    def get_current_or_404(cls):
+        tournament = cls.get_current()
+        if not tournament:
+            raise Http404
+
+        return tournament
+
+    def __unicode__(self):
+        return unicode(self.__str__())
+
+    def __str__(self):
+        return self.name
+
+    @property
+    def is_1v1(self):
+        return self.max_team_size == 1
+
+    @property
+    def enrolled_names(self):
+        return [tup[0] for tup in self.entries.values_list('team__name')]
 
 
 class Team(models.Model):
@@ -57,10 +77,10 @@ class Team(models.Model):
     def get_current_members(self):
         tournament = Tournament.get_current()
         try:
-            membership = self.entries.get(tournament=tournament)
+            entry = self.entries.get(tournament=tournament)
         except TeamEntry.DoesNotExist:
             return []
-        return membership.players
+        return entry.players
 
 
 class TeamEntry(models.Model):
