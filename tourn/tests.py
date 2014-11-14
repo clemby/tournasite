@@ -1,6 +1,11 @@
+from datetime import datetime
+from django.http import Http404
+
 from django.test import TestCase
 from django.utils import timezone
 from django.contrib.auth.models import User
+
+import mock
 
 from . import models
 
@@ -16,15 +21,19 @@ class RequiresUsersTestCase(TestCase):
 
 
 class RequiresTournamentTestCase(TestCase):
-    def setup_tournament(self, **kwargs):
+    def create_tournament(self, **kwargs):
         if 'name' not in kwargs:
             kwargs['name'] = 'test tournament'
 
         if 'planned_start' not in kwargs:
             kwargs['planned_start'] = timezone.now()
 
-        self.tournament = models.Tournament(**kwargs)
-        self.tournament.save()
+        tournament = models.Tournament(**kwargs)
+        tournament.save()
+        return tournament
+
+    def setup_tournament(self, **kwargs):
+        self.tournament = self.create_tournament(**kwargs)
 
 
 class RequiresTeamsTestCase(TestCase):
@@ -88,3 +97,68 @@ class TournamentEnrolledNamesTestCase(RequiresTeamEntriesTestCase):
             self.tournament.enrolled_player_names,
             [user.username for user in self.users]
         )
+
+
+class TournamentGetCurrentTestCase(RequiresTournamentTestCase):
+    def setup_tournaments(self):
+        self.dates = [
+            datetime(2014, 1, 1),
+            datetime(2014, 2, 1),
+            datetime(2014, 3, 1),
+            datetime(2014, 4, 1),
+            datetime(2014, 5, 1),
+        ]
+
+        self.tournaments = [
+            self.create_tournament(planned_start=date)
+            for date in self.dates
+        ]
+
+    @mock.patch('django.utils.timezone.now',
+                mock.Mock(side_effect=lambda: datetime(2014, 3, 1)))
+    def test_get_current_gets_closest_future_tournament(self):
+        self.setup_tournaments()
+        self.assertEqual(
+            models.Tournament.get_current(),
+            self.tournaments[2]
+        )
+
+    @mock.patch('django.utils.timezone.now',
+                mock.Mock(side_effect=lambda: datetime(2014, 6, 1)))
+    def test_get_current_returns_most_recent_if_no_future_tournaments(self):
+        self.setup_tournaments()
+        self.assertEqual(
+            models.Tournament.get_current(),
+            self.tournaments[-1]
+        )
+
+    @mock.patch('django.utils.timezone.now',
+                mock.Mock(side_effect=lambda: datetime(2014, 1, 1)))
+    def test_get_current_returns_none_if_no_future_or_past(self):
+        self.assertEqual(models.Tournament.get_current(), None)
+
+
+class TournamentGetCurrentOr404TestCase(RequiresTournamentTestCase):
+    def test_get_current_or_404_gets_current_if_possible(self):
+        tournament = models.Tournament(
+            name='tournament',
+            planned_start=datetime(2014, 1, 1)
+        )
+
+        with mock.patch.object(models.Tournament, 'get_current',
+                               side_effect=lambda: tournament):
+            self.assertEqual(
+                models.Tournament.get_current_or_404(),
+                tournament
+            )
+
+    @mock.patch('tourn.models.Tournament.get_current',
+                mock.Mock(side_effect=lambda: None))
+    def test_get_current_or_404_throws_404_if_none_found(self):
+
+        with mock.patch.object(models.Tournament, 'get_current',
+                               side_effect=lambda: None):
+            self.assertRaises(
+                Http404,
+                models.Tournament.get_current_or_404
+            )
