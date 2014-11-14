@@ -30,7 +30,7 @@ class CurrentMembersField(serializers.Field):
     read_only = True
 
     def field_to_native(self, obj, field_name):
-        queryset = obj.get_current_members()
+        queryset = obj.current_members
         if not queryset:
             return []
         return [tup[0] for tup in queryset.values_list('username')]

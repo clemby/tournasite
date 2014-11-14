@@ -80,13 +80,19 @@ class Team(models.Model):
     def __str__(self):
         return self.name
 
-    def get_current_members(self):
+    @property
+    def current_members(self):
         tournament = Tournament.get_current()
         try:
             entry = self.entries.get(tournament=tournament)
         except TeamEntry.DoesNotExist:
-            return []
+            return None
         return entry.players
+
+    @property
+    def current_member_names(self):
+        values_list = self.current_members.values_list('username')
+        return [tup[0] for tup in values_list]
 
     def is_admin(self, user):
         try:

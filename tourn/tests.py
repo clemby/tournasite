@@ -37,15 +37,21 @@ class RequiresTournamentTestCase(TestCase):
 
 
 class RequiresTeamsTestCase(TestCase):
+    def create_team(self, **kwargs):
+        team = models.Team(**kwargs)
+        team.save()
+        return team
+
     def setup_teams(self):
         user_range = range(len(self.users) / 2)
 
         self.teams = [
-            models.Team(name='Team {}'.format(i), creator=self.users[2 * i])
+            self.create_team(
+                name='Team {}'.format(i),
+                creator=self.users[2 * i]
+            )
             for i in user_range
         ]
-        for team in self.teams:
-            team.save()
 
 
 class RequiresTeamEntriesTestCase(RequiresUsersTestCase,
@@ -134,7 +140,7 @@ class TournamentGetCurrentTestCase(RequiresTournamentTestCase):
 
     @mock.patch('django.utils.timezone.now',
                 mock.Mock(side_effect=lambda: datetime(2014, 1, 1)))
-    def test_get_current_returns_none_if_no_future_or_past(self):
+    def test_get_current_returns_None_if_no_future_or_past(self):
         self.assertEqual(models.Tournament.get_current(), None)
 
 
@@ -154,11 +160,71 @@ class TournamentGetCurrentOr404TestCase(RequiresTournamentTestCase):
 
     @mock.patch('tourn.models.Tournament.get_current',
                 mock.Mock(side_effect=lambda: None))
-    def test_get_current_or_404_throws_404_if_none_found(self):
+    def test_get_current_or_404_throws_404_if_None_found(self):
 
         with mock.patch.object(models.Tournament, 'get_current',
                                side_effect=lambda: None):
             self.assertRaises(
                 Http404,
                 models.Tournament.get_current_or_404
+            )
+
+
+class TeamGetCurrentMembersTestCase(RequiresUsersTestCase,
+                                    RequiresTeamsTestCase,
+                                    RequiresTournamentTestCase):
+    def setUp(self):
+        self.setup_users()
+
+        self.entered_tournaments = [
+            self.create_tournament()
+            for i in range(1, 4)
+        ]
+
+        self.unentered_tournament = self.create_tournament()
+
+        self.team = self.create_team(name='Team', creator=self.users[0])
+        self.team.save()
+
+        self.entries = [
+            models.TeamEntry(tournament=tournament, team=self.team)
+            for tournament in self.entered_tournaments
+        ]
+
+        for i, entry in enumerate(self.entries):
+            entry.save()
+            entry.players = self.users[2 * i: 2 * i + 2]
+            entry.save()
+
+    def test_current_members(self):
+        with mock.patch.object(
+            models.Tournament,
+            'get_current',
+            side_effect=lambda: self.entered_tournaments[2]
+        ):
+            self.assertEqual(
+                list(self.team.current_members.all()),
+                [self.users[4], self.users[5]]
+            )
+
+    def test_current_members_is_None_if_no_entries_in_current_tournament(self):
+        with mock.patch.object(
+            models.Tournament,
+            'get_current',
+            side_effect=lambda: self.unentered_tournament
+        ):
+            self.assertEqual(
+                self.team.current_members,
+                None
+            )
+
+    def test_current_member_names(self):
+        with mock.patch.object(
+            models.Tournament,
+            'get_current',
+            side_effect=lambda: self.entered_tournaments[2]
+        ):
+            self.assertEqual(
+                self.team.current_member_names,
+                [self.users[4].username, self.users[5].username]
             )
