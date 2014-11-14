@@ -57,8 +57,13 @@ class Tournament(models.Model):
         return self.max_team_size == 1
 
     @property
-    def enrolled_names(self):
+    def enrolled_team_names(self):
         return [tup[0] for tup in self.entries.values_list('team__name')]
+
+    @property
+    def enrolled_player_names(self):
+        values_list = self.entries.values_list('players__username')
+        return [tup[0] for tup in values_list]
 
 
 class Team(models.Model):
