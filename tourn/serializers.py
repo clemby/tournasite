@@ -61,11 +61,10 @@ class TeamNameField(serializers.RelatedField):
 class TeamEntrySerializer(serializers.ModelSerializer):
     team = TeamNameField()
     players = UsernameSerializer(many=True)
-    tournament = TournamentField
 
     class Meta:
         model = TeamEntry
-        fields = ('id', 'team', 'players')
+        fields = ('id', 'team', 'players', 'tournament')
 
 
 class MemberField(serializers.RelatedField):
@@ -76,25 +75,14 @@ class MemberField(serializers.RelatedField):
     name = serializers.CharField(source='username')
 
 
-class TeamEntryField(serializers.RelatedField):
+class TeamEntryField(serializers.ModelSerializer):
     read_only = False
+
+    members = MemberField(many=True, source='get_member_names')
 
     class Meta:
         model = TeamEntry
         fields = ('id', 'members', 'tournament')
-
-    def to_native(self, entry):
-        return {
-            'id': entry.id,
-            'members': entry.get_member_names(),
-            'tournament': {
-                'id': entry.tournament.id,
-                'name': entry.tournament.name,
-            }
-        }
-
-    def from_native(self, obj):
-        return get_object_or_404(TeamEntry, obj['id'])
 
 
 class TeamSerializer(serializers.ModelSerializer):
