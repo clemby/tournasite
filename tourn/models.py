@@ -112,6 +112,9 @@ class TeamEntry(models.Model):
     players = models.ManyToManyField(User, related_name='tournament_entries')
     team = models.ForeignKey(Team, related_name='entries')
 
+    def get_member_names(self):
+        return [tup[0] for tup in self.players.values_list('username')]
+
 
 class Match(models.Model):
     name = models.CharField(max_length=40, blank=True)

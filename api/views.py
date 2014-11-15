@@ -5,11 +5,13 @@ from rest_framework import permissions, viewsets
 
 from tourn.models import (
     Team,
+    TeamEntry,
     Match,
     Tournament,
 )
 from tourn.serializers import (
     TeamSerializer,
+    TeamEntrySerializer,
     UserSerializer,
     MatchSerializer,
     TournamentSerializer,
@@ -23,6 +25,12 @@ class TeamViewSet(viewsets.ModelViewSet):
 
     def pre_save(self, obj):
         obj.creator = self.request.user
+
+
+class TeamEntryViewSet(viewsets.ModelViewSet):
+    queryset = TeamEntry.objects.all()
+    serializer_class = TeamEntrySerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
 
 
 class PlayerViewSet(viewsets.ReadOnlyModelViewSet):

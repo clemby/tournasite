@@ -3,13 +3,15 @@ from django.shortcuts import get_object_or_404
 
 from rest_framework import serializers
 
-from tourn.models import Team, Match, Tournament
+from tourn.models import (
+    Team,
+    Match,
+    Tournament,
+    TeamEntry,
+)
 
 
 class UserSerializer(serializers.ModelSerializer):
-    teams = serializers.PrimaryKeyRelatedField(many=True)
-    created_teams = serializers.PrimaryKeyRelatedField(many=True)
-
     class Meta:
         model = User
         fields = ('username', 'id')
@@ -26,50 +28,10 @@ class UsernameSerializer(serializers.RelatedField):
         return get_object_or_404(User, username=data)
 
 
-class CurrentMembersField(serializers.Field):
-    read_only = True
-
-    def field_to_native(self, obj, field_name):
-        queryset = obj.current_members
-        if not queryset:
-            return []
-        return [tup[0] for tup in queryset.values_list('username')]
-
-
-class TeamSerializer(serializers.ModelSerializer):
-    """Serialize a team, with entries intact."""
+class TournamentField(serializers.RelatedField):
     class Meta:
-        model = Team
-        fields = ('name', 'id', 'creator', 'entries', 'current_members')
-
-    creator = serializers.Field(source='creator.username')
-    current_members = CurrentMembersField()
-
-
-class TeamNameSerializer(serializers.RelatedField):
-    """Serializes Team instances as their name."""
-    read_only = False
-
-    def to_native(self, team):
-        return team.name
-
-    def from_native(self, data):
-        return get_object_or_404(Team, name=data)
-
-
-class MatchSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Match
-        fields = ('name', 'id', 'teams',)
-
-    name = serializers.CharField(max_length=40, required=False)
-
-
-class MatchNameSerializer(serializers.RelatedField):
-    read_only = True
-
-    def to_native(self, match):
-        return match.name
+        model = Tournament
+        fields = ('name', 'id', 'planned_start')
 
 
 class TournamentSerializer(serializers.ModelSerializer):
@@ -83,3 +45,80 @@ class TournamentSerializer(serializers.ModelSerializer):
 
     min_teams_per_match = serializers.IntegerField(default=2, min_value=1)
     max_teams_per_match = serializers.IntegerField(default=2, min_value=1)
+
+
+class TeamNameField(serializers.RelatedField):
+    """Serializes Team instances as their name."""
+    read_only = False
+
+    def to_native(self, team):
+        return team.name
+
+    def from_native(self, data):
+        return get_object_or_404(Team, name=data)
+
+
+class TeamEntrySerializer(serializers.ModelSerializer):
+    team = TeamNameField()
+    players = UsernameSerializer(many=True)
+    tournament = TournamentField
+
+    class Meta:
+        model = TeamEntry
+        fields = ('id', 'team', 'players')
+
+
+class MemberField(serializers.RelatedField):
+    class Meta:
+        model = User
+        fields = ('id', 'name')
+
+    name = serializers.CharField(source='username')
+
+
+class TeamEntryField(serializers.RelatedField):
+    read_only = False
+
+    class Meta:
+        model = TeamEntry
+        fields = ('id', 'members', 'tournament')
+
+    def to_native(self, entry):
+        return {
+            'id': entry.id,
+            'members': entry.get_member_names(),
+            'tournament': {
+                'id': entry.tournament.id,
+                'name': entry.tournament.name,
+            }
+        }
+
+    def from_native(self, obj):
+        return get_object_or_404(TeamEntry, obj['id'])
+
+
+class TeamSerializer(serializers.ModelSerializer):
+    """Serialize a team, with entries intact."""
+    class Meta:
+        model = Team
+        fields = ('name', 'id', 'creator', 'tournament_entries')
+
+    tournament_entries = TeamEntryField(many=True, source='entries',
+                                        read_only=True)
+
+
+class MatchSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Match
+        fields = ('name', 'id', 'teams')
+
+    def to_native(self, match):
+        return {}
+        return {
+            'id': match.id,
+            'name': match.name,
+            'teams': [team.name for team in match.teams],
+        }
+
+    def from_native(self, match):
+        return get_object_or_404(Match, match['id'])
