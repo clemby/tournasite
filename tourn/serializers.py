@@ -98,15 +98,4 @@ class TeamSerializer(serializers.ModelSerializer):
 class MatchSerializer(serializers.ModelSerializer):
     class Meta:
         model = Match
-        fields = ('name', 'id', 'teams')
-
-    def to_native(self, match):
-        return {}
-        return {
-            'id': match.id,
-            'name': match.name,
-            'teams': [team.name for team in match.teams],
-        }
-
-    def from_native(self, match):
-        return get_object_or_404(Match, match['id'])
+        fields = ('name', 'id', 'teams', 'tournament')
