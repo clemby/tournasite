@@ -10,6 +10,8 @@ https://docs.djangoproject.com/en/1.7/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+import json
+
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
@@ -40,7 +42,9 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'djangobower',
     'rest_framework',
+
     'tourn',
 )
 
@@ -88,6 +92,32 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'djangobower.finders.BowerFinder',
+)
+
+# There seems to be a bug(?) in djangobower which always appends
+# 'bower_components' to the end of this. Then the os.path.exists check for
+# <BASE_DIR>/bower_components/bower_components fails, and it ends up looking in
+# <BASE_DIR>/bower_components/components/ which is VERY annoying.
+BOWER_COMPONENTS_ROOT = BASE_DIR
+
+
+def get_bower_components():
+    components = []
+    with open('bower.json', 'r') as bower_file:
+        dependencies = json.load(bower_file)['dependencies']
+        for name, version in dependencies.items():
+            dep = name if version == '*' else '{}#{}'.format(name, version)
+            components.append(dep)
+
+    return tuple(components)
+
+BOWER_INSTALLED_APPS = get_bower_components()
 
 
 REST_FRAMEWORK = {
