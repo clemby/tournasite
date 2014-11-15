@@ -1,1 +1,42 @@
-<div>Tournament: {{ tournament.name }}</div>
+{% load staticfiles %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet"
+      href="{% static 'jquery.bracket/dist/jquery.bracket.min.css' %}" />
+  </head>
+
+  <body>
+    <noscript>
+      <p class="noscript">Uh oh! It looks like JavaScript isn't enabled in your
+      browser. This site is an interactive one, and won't work properly unless
+      you enable JS in your browser. Here are some
+      <a href="http://www.enable-javascript.com/" target="_blank">
+        handy instructions
+      </a>
+      in case you need them. Enjoy!</p>
+    </noscript>
+
+    <div id="brackets"></div>
+
+    <script type="text/javascript"
+      src="{% static 'jquery/jquery.js' %}"
+      cdn="//cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js">
+    </script>
+
+    <script type="text/javascript"
+      src="{% static 'jquery.bracket/dist/jquery.bracket.js' %}">
+    </script>
+
+    <script type="text/javascript"
+      src="{% static 'tourn/format-api-response.js' %}">
+    </script>
+
+    <script type="text/javascript">
+      $(function() {
+        var data = {% autoescape off %}{{tournament_data}}{% endautoescape %};
+        setupBrackets('#brackets', data);
+      });
+    </script>
+  </body>
+</html>

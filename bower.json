@@ -17,6 +17,6 @@
   },
   "dependencies": {
     "jquery": "1.8.3",
-    "jquery.brackets": "https://github.com/teijo/jquery-bracket.git"
+    "jquery.bracket": "https://github.com/teijo/jquery-bracket.git"
   }
 }
