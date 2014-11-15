@@ -68,16 +68,15 @@ class TeamEntrySerializer(serializers.ModelSerializer):
 
 
 class MemberField(serializers.RelatedField):
+    name = serializers.CharField(source='username')
+
     class Meta:
         model = User
         fields = ('id', 'name')
 
-    name = serializers.CharField(source='username')
-
 
 class TeamEntryField(serializers.ModelSerializer):
     read_only = False
-
     members = MemberField(many=True, source='get_member_names')
 
     class Meta:
@@ -87,15 +86,17 @@ class TeamEntryField(serializers.ModelSerializer):
 
 class TeamSerializer(serializers.ModelSerializer):
     """Serialize a team, with entries intact."""
+    tournament_entries = TeamEntryField(many=True, source='entries',
+                                        read_only=True)
+
     class Meta:
         model = Team
         fields = ('name', 'id', 'creator', 'tournament_entries')
 
-    tournament_entries = TeamEntryField(many=True, source='entries',
-                                        read_only=True)
-
 
 class MatchSerializer(serializers.ModelSerializer):
+    teams = TeamNameField(many=True)
+
     class Meta:
         model = Match
         fields = ('name', 'id', 'teams', 'tournament')
