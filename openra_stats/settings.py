@@ -15,9 +15,6 @@ import json
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 
-from . import local_settings
-
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.7/howto/deployment/checklist/
 
@@ -65,15 +62,7 @@ WSGI_APPLICATION = 'openra_stats.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
-DATABASES.update(local_settings.DATABASES)
-
+# You need to define DATABASES this in ./local_settings.py.
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
 
@@ -123,3 +112,6 @@ BOWER_INSTALLED_APPS = get_bower_components()
 REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.DjangoFilterBackend',),
 }
+
+
+from local_settings import *  # nopep8
