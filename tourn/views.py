@@ -1,20 +1,32 @@
 import json
 
+from django.core.urlresolvers import reverse
+from django.contrib.auth.decorators import login_required
 from django.views import generic
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404
 
 from .models import (
     Team,
     Tournament,
     TeamEntry,
+    PlayerRandomTeamEntry,
     Match,
 )
 
 
-class TournamentDetail(generic.DetailView):
+class MessagePage(generic.TemplateView):
+    template_name = 'tourn/message.html'
+
+    def get_context_data(self, message=None, **kwargs):
+        context = super(MessagePage, self).get_context_data(**kwargs)
+        context['message'] = message
+        return context
+
+
+class TournamentDetail(generic.View):
     template_name = 'tourn/tournament_detail.html'
 
-    def get(self, request, pk, **kwargs):
+    def get(self, request, pk):
         tournament = get_object_or_404(Tournament, pk=pk)
         entries = TeamEntry.objects.filter(tournament=tournament)
 
