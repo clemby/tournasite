@@ -1,0 +1,60 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    {% block title %}
+    <title>(Unofficial) OpenRA stats page</title>
+    {% endblock %}
+
+    <link rel="stylesheet" href="{% static 'tourn/base.css' %}" />
+    {% comment %}
+    Override this to pick a different version/custom build.
+    {% endcomment %}{% block bootstrap_link %}
+    <link rel="stylesheet" {% if debug %}
+      href="{% static 'bootstrap/dist/css/bootstrap.css' %}"{% else %}
+      href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css"{% endif %} />
+    {% endblock %}
+
+    {% block links %}
+    {% endblock %}
+  </head>
+
+  <body>
+    <noscript>
+      {% block noscript %}
+      <p class="noscript">Uh oh! It looks like JavaScript isn't enabled in your
+      browser. Some parts of this site won't work properly unless you enable
+      it. Here are some
+      <a href="http://www.enable-javascript.com/" target="_blank">
+        handy instructions
+      </a>
+      in case you need them. Enjoy!</p>
+      {% endblock %}
+    </noscript>
+
+    {% block main %}
+    {% endblock %}
+
+    {% comment %}
+    Allow pages to override the version of jQuery if they need to. Version
+    1.11.1 is default because it works with the crusty old browsers too.
+    {% endcomment %}{% block jquery %}
+    <script type="text/javascript" {% if debug %}
+      src="{% static 'jquery/dist/jquery.js' %}"{% else %}
+      src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"{% endif %}>
+    </script>
+    {% endblock %}
+
+    {% comment %}Allow bootstrap version to be overridden too.
+    {% endcomment %}{% block bootstrap_script %}
+    <script type="text/javascript" {% if debug %}
+      src="{% static 'bootstrap/dist/js/bootstrap.min.js' %}" {% else %}
+      src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"{% endif %}>
+    </script>
+    {% endblock %}
+
+    {% block scripts %}
+    {% endblock %}
+  </body>
+</html>
+

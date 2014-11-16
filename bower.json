@@ -13,10 +13,10 @@
     "test",
     "tests"
   ],
-  "devDependencies": {
-  },
+  "devDependencies": {},
   "dependencies": {
-    "jquery": "1.8.3",
-    "jquery.bracket": "https://github.com/teijo/jquery-bracket.git"
+    "jquery": "1",
+    "jquery.bracket": "https://github.com/teijo/jquery-bracket.git",
+    "bootstrap": "~3.3.1"
   }
 }
