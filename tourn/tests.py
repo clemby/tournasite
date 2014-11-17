@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.http import Http404
 
 from django.test import TestCase
@@ -124,6 +124,35 @@ class TournamentGetCurrentTestCase(RequiresTournamentTestCase):
                 mock.Mock(side_effect=lambda: datetime(2014, 3, 1)))
     def test_get_current_gets_closest_future_tournament(self):
         self.setup_tournaments()
+        self.assertEqual(
+            models.Tournament.get_current(),
+            self.tournaments[2]
+        )
+
+    @mock.patch('django.utils.timezone.now',
+                mock.Mock(side_effect=lambda: datetime(2014, 3, 1)))
+    def test_get_current_does_not_exclude_if_planned_finish_is_in_future(self):
+        self.setup_tournaments()
+
+        for t in self.tournaments:
+            # Each tournament takes two weeks.
+            t.planned_finish = t.planned_start + timedelta(14, 0, 0)
+            t.save()
+
+        self.assertEqual(
+            models.Tournament.get_current(),
+            self.tournaments[2]
+        )
+
+    @mock.patch('django.utils.timezone.now',
+                mock.Mock(side_effect=lambda: datetime(2014, 3, 1)))
+    def test_get_current_excludes_if_planned_finish_is_past(self):
+        self.setup_tournaments()
+
+        for t in self.tournaments[:-1]:
+            t.planned_finish = t.planned_start
+            t.save()
+
         self.assertEqual(
             models.Tournament.get_current(),
             self.tournaments[2]

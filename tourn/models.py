@@ -19,7 +19,7 @@ class Tournament(models.Model):
     @classmethod
     def get_current(cls):
         future_tournaments = cls.objects.filter(
-            planned_start__gte=timezone.now()
+            planned_finish__gte=timezone.now()
         )
 
         if future_tournaments.exists():
