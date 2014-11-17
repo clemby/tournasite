@@ -38,7 +38,9 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
 
+    'registration',
     'djangobower',
     'rest_framework',
 
@@ -53,6 +55,16 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+)
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.contrib.auth.context_processors.auth',
+    'django.core.context_processors.debug',
+    'django.core.context_processors.i18n',
+    'django.core.context_processors.media',
+    'django.core.context_processors.static',
+    'django.core.context_processors.tz',
+    'django.contrib.messages.context_processors.messages'
 )
 
 ROOT_URLCONF = 'openra_stats.urls'
@@ -75,6 +87,14 @@ USE_I18N = True
 USE_L10N = True
 
 USE_TZ = True
+
+
+# registration provides templates for the registration app, and
+# openra_stats/templates (for base.html) isn't included by default.
+TEMPLATE_DIRS = (
+    os.path.join(BASE_DIR, 'openra_stats/templates'),
+    os.path.join(BASE_DIR, 'registration/templates'),
+)
 
 
 # Static files (CSS, JavaScript, Images)
@@ -112,6 +132,15 @@ BOWER_INSTALLED_APPS = get_bower_components()
 REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ('rest_framework.filters.DjangoFilterBackend',),
 }
+
+
+# django-registration-redux options
+ACCOUNT_ACTIVATION_DAYS = 1
+REGISTRATION_AUTO_LOGIN = False
+
+
+# For django.contrib.sites
+SITE_ID = 1
 
 
 from local_settings import *  # nopep8
