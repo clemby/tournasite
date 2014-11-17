@@ -134,9 +134,10 @@ REST_FRAMEWORK = {
 }
 
 
-# django-registration-redux options
+# Registration/login options.
 ACCOUNT_ACTIVATION_DAYS = 1
 REGISTRATION_AUTO_LOGIN = False
+LOGIN_REDIRECT_URL = '/tourn/'
 
 
 # For django.contrib.sites

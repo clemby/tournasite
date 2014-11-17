@@ -103,17 +103,22 @@ class Team(models.Model):
 
 
 class TeamEntry(models.Model):
-    """
-    Membership of a team, for a single tournament.
-
-    Team membership differs between tournaments.
-    """
+    """A team's entry into a tournament."""
     tournament = models.ForeignKey(Tournament, related_name='entries')
     players = models.ManyToManyField(User, related_name='tournament_entries')
     team = models.ForeignKey(Team, related_name='entries')
 
     def get_member_names(self):
         return [tup[0] for tup in self.players.values_list('username')]
+
+
+class PlayerRandomTeamEntry(models.Model):
+    """
+    A Player's request to join a random team in a tournament.
+    """
+    tournament = models.ForeignKey(Tournament, related_name='player_entries')
+    player = models.ForeignKey(
+        User, related_name='tournament_random_team_entries')
 
 
 class Match(models.Model):

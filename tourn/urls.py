@@ -5,8 +5,8 @@ from . import views
 
 urlpatterns = patterns(
     '',
-    url(r'^success/$', views.MessagePage.as_view(), name='success'),
-    url(r'^error/$', views.MessagePage.as_view(), name='error'),
+    url(r'^success/$', views.MessageView.as_view(), name='success'),
+    url(r'^error/$', views.MessageView.as_view(), name='error'),
 
     url(r'^teams/$', views.TeamList.as_view(), name='team_list'),
     url(r'^teams/(?P<pk>\d+)/$',
@@ -19,4 +19,8 @@ urlpatterns = patterns(
     url(r'^tournaments/(?P<pk>\d+)/$',
         views.TournamentDetail.as_view(),
         name='tournament_detail'),
+
+    url(r'^signup/(?P<tournament_pk>\d+)/random/$',
+        views.PlayerSignupRandomTeam.as_view(),
+        name='tournament_signup_random_team'),
 )

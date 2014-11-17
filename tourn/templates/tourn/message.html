@@ -5,9 +5,14 @@
 {% endblock %}
 
 
-{% block main %}
-{% if message %}<div>{{ message }}</div>{% endif %}
+{% block content %}
+<div class="container">
+  {% if image %}
+  <img class="page-header" src="{{image.header}}" alt="{{image.alt}}">
+  {% endif %}
+  <p class="left text">{{ message }}</p>
+  <p class="left text">
+    <a href="/">Return to index</a>
+  </p>
+</div>
 {% endblock %}
-
-
-{% block jquery %}{% endblock %}

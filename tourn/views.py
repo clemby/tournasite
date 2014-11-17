@@ -1,9 +1,9 @@
 import json
 
-from django.core.urlresolvers import reverse
+from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views import generic
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 
 from .models import (
     Team,
@@ -14,11 +14,11 @@ from .models import (
 )
 
 
-class MessagePage(generic.TemplateView):
+class MessageView(generic.TemplateView):
     template_name = 'tourn/message.html'
 
-    def get_context_data(self, message=None, **kwargs):
-        context = super(MessagePage, self).get_context_data(**kwargs)
+    def get_context_data(self, title=None, message=None, **kwargs):
+        context = super(MessageView, self).get_context_data(**kwargs)
         context['message'] = message
         return context
 
@@ -56,6 +56,38 @@ class TournamentDetail(generic.View):
 
         return render(request, self.template_name, {
             'tournament_data': tournament_data,
+        })
+
+
+class PlayerSignupRandomTeam(generic.View):
+    success_template = 'tourn/message.html'
+    error_template = 'tourn/message.html'
+
+    @method_decorator(login_required)
+    def get(self, request, tournament_pk):
+        tournament = get_object_or_404(Tournament, pk=tournament_pk)
+
+        already_entered = PlayerRandomTeamEntry.objects.filter(
+            player=request.user,
+            tournament=tournament_pk
+        ).exists() or TeamEntry.objects.filter(
+            players__contains=request.user,
+            tournament=tournament_pk
+        ).exists()
+
+        if already_entered:
+            return render(request, self.error_template, {
+                'message': "You've already entered that tournament!",
+                'title': "Registration failed",
+            })
+
+        entry = PlayerRandomTeamEntry(tournament=tournament,
+                                      player=request.user)
+        entry.save()
+
+        return render(request, self.success_template, {
+            'message': "Registration successful!",
+            'title': 'Registration successful!',
         })
 
 
