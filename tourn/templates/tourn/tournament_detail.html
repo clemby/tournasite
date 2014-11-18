@@ -12,6 +12,7 @@
 
 
 {% block links %}
+<link rel="stylesheet" href="{% static 'tourn/css/base.css' %}" />
 <link rel="stylesheet"
   href="{% static 'jquery.bracket/dist/jquery.bracket.min.css' %}" />
 {% endblock %}
@@ -41,7 +42,7 @@ in case you need them. Enjoy!</p>
   </div>
 
   <div id="team-list-container">
-    <h1>Teams</h1>
+    <h2>Teams</h2>
     <div id="team-list">
       <ul>
         {% for team in teams %}
@@ -50,24 +51,36 @@ in case you need them. Enjoy!</p>
       </ul>
     </div>
   </div>
+
+  {% if tournament.winner %}
+  <div id="winner-container">
+    <h2>Winner</h2>
+    <h3>{{ tournament.winner.name }}</h3>
+  </div>
+  {% endif %}
 {% endblock %}
 
 
 {% block scripts %}
-    <script type="text/javascript"
-      src="{% static 'jquery.bracket/dist/jquery.bracket.js' %}">
-    </script>
+<script type="text/javascript"
+  src="{% static 'jquery.bracket/dist/jquery.bracket.js' %}">
+</script>
 
-    <script type="text/javascript"
-      src="{% static 'tourn/js/format-api-response.js' %}">
-    </script>
+<script type="text/javascript"
+  src="{% static 'tourn/js/format-api-response.js' %}">
+</script>
 
-    <script type="text/javascript">
-      $(function() {
-        var data = {% autoescape off %}{{ as_json }}{% endautoescape %};
-        setupBrackets('#brackets', data);
-      });
-    </script>
+<script type="text/javascript">
+  $(function() {
+    var data = {% autoescape off %}{{ as_json }}{% endautoescape %};
+    setupBrackets('#brackets', data);
+
+    var bracketsOuter = $('#brackets'),
+        bracketsInner = bracketsOuter.find('.bracket');
+    bracketsOuter.height(bracketsInner.height());
+    bracketsOuter.width(bracketsInner.width());
+  });
+</script>
 {% endblock %}
 
   </body>

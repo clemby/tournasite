@@ -1,0 +1,20 @@
+body {
+  color: #cfcfcf;
+}
+
+.header,h1,h2,h3,h4,h5,h6 {
+  color: #f0f0f0;
+}
+
+.label {
+  color: #0f0f0f;
+}
+
+div.jQBracket .team.highlight {
+  background-color: red !important;
+}
+
+.container {
+  background-color: rgba(51,51,51,0.4);
+  border: 1px solid red;
+}
