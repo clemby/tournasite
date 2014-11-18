@@ -1,7 +1,6 @@
 /** Base site CSS, based on bootstrap's Jumbotron theme. */
 /* Space out content a bit */
 body {
-  background-image: url('http://www.openra.net/images/bg.svg');
   padding-top: 20px;
   padding-bottom: 20px;
 }
