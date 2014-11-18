@@ -5,6 +5,8 @@ from . import views
 
 urlpatterns = patterns(
     '',
+    url(r'^$', views.TournIndex.as_view(), name='index'),
+
     url(r'^success/$', views.MessageView.as_view(), name='success'),
     url(r'^error/$', views.MessageView.as_view(), name='error'),
 

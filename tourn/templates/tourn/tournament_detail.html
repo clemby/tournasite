@@ -29,7 +29,27 @@ in case you need them. Enjoy!</p>
 
 
 {% block content %}
-<div id="brackets"></div>
+<div class="container">
+
+  {% if tournament.name %}
+  <h1>{{ tournament.name }}</h1>
+  {% endif %}
+
+  <div id="brackets-container">
+    <h2>Matches</h2>
+    <div id="brackets"></div>
+  </div>
+
+  <div id="team-list-container">
+    <h1>Teams</h1>
+    <div id="team-list">
+      <ul>
+        {% for team in teams %}
+        <li>{{ team.name }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
 {% endblock %}
 
 
@@ -44,7 +64,7 @@ in case you need them. Enjoy!</p>
 
     <script type="text/javascript">
       $(function() {
-        var data = {% autoescape off %}{{tournament_data}}{% endautoescape %};
+        var data = {% autoescape off %}{{ as_json }}{% endautoescape %};
         setupBrackets('#brackets', data);
       });
     </script>

@@ -26,11 +26,9 @@ class MessageView(generic.TemplateView):
 class TournamentDetail(generic.View):
     template_name = 'tourn/tournament_detail.html'
 
-    def get(self, request, pk):
-        tournament = get_object_or_404(Tournament, pk=pk)
+    def get_team_list(self, tournament):
         entries = TeamEntry.objects.filter(tournament=tournament)
-
-        teams_list = [
+        return [
             {
                 'name': entry.team.name,
                 'id': entry.team.id,
@@ -39,8 +37,9 @@ class TournamentDetail(generic.View):
             for entry in entries
         ]
 
+    def get_match_list(self, tournament):
         matches = Match.objects.filter(tournament=tournament)
-        matches_list = [
+        return [
             {
                 'name': match.name,
                 'teams': [team.name for team in match.teams.all()],
@@ -49,14 +48,33 @@ class TournamentDetail(generic.View):
             for match in matches
         ]
 
-        tournament_data = json.dumps({
-            'matches': matches_list,
+    def get_tournament_data(self, request, tournament):
+        teams_list = self.get_team_list(tournament)
+        match_list = self.get_match_list(tournament)
+
+        tournament_data = {
+            'matches': match_list,
             'teams': teams_list,
-        })
+        }
 
         return render(request, self.template_name, {
-            'tournament_data': tournament_data,
+            'tournament': tournament,
+            'matches': match_list,
+            'teams': teams_list,
+            'as_json': json.dumps(tournament_data),
         })
+
+    def get(self, request, pk):
+        tournament = get_object_or_404(Tournament, pk=pk)
+        return self.get_tournament_data(request, tournament)
+
+
+class TournIndex(TournamentDetail):
+    template_name = 'tourn/tournament_detail.html'
+
+    def get(self, request):
+        tournament = Tournament.get_current_or_404()
+        return self.get_tournament_data(request, tournament)
 
 
 class PlayerSignupRandomTeam(generic.View):
