@@ -1,41 +1,105 @@
 function formatApiResponse(data) {
-  var fixtures = [],
-      results = [];
+  var teams = {},
+      matches = {},
+      heads = [];
+
+  $.each(data.teams, function(i, team) {
+    teams[team.id] = team;
+  });
 
   $.each(data.matches, function(i, match) {
-    var a = match.teams.slice();
-    a.push(match.name);
-    fixtures.push(a);
+    matches[match.id] = match;
 
-    var result;
-    if (match.winner) {
-      switch ($.inArray(match.winner, match.teams)) {
-        case 0:
-          result = [1, 0];
-          break;
-        case 1:
-          result = [0, 1];
-          break;
-        default:
-          throw Error("Couldn't find match winner among teams!");
-      }
+    if (typeof match.winnerNext !== 'number') {
+      heads.push(match.id);
     }
-    else {
-      result = null;
-    }
-
-    results.push(result);
   });
 
-  var teams = $.map(data.teams, function(team) { 
-    return team.name;
+
+  // 'Head': final or, if a double elimination, losing bracket final.
+  var headCount = heads.length;
+  if (!headCount) {
+    throw Error("Empty or circular tournament");
+  }
+
+  if (headCount > 2) {
+    throw Error("Too many tournament heads");
+  }
+
+
+  var trees = heads.map(getTree).sort(function(a, b) {
+    return b.length - a.length;
   });
+
+  var results = trees.map(function(tree) {
+    return tree.map(function(tier) {
+      return tier.map(getResult);
+    });
+  });
+
+  var firstFixtures = trees[0][0];
+  var firstFixtureTeams = firstFixtures.map(function(matchId) {
+    return matches[matchId].teams.map(function(teamId) {
+      return teams[teamId].name;
+    });
+  });
+
 
   return {
-    teams: teams,
-    fixtures: fixtures,
-    results: results
+    teams: firstFixtureTeams,
+    matches: matches,
+    results: results,
+    trees: trees
   };
+
+  function isEmpty(obj) {
+    for (var key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+
+  function getTree(head) {
+    var currentTier = [head],
+        tiers = [];
+
+    while (currentTier.length) {
+      tiers.push(currentTier);
+      currentTier = $.map(currentTier, function(matchId) {
+        return getChildren(matchId);
+      });
+    }
+
+    return tiers.reverse();
+  }
+
+
+  function getChildren(parentId) {
+    return $.map(matches, function(match) {
+      return match.winnerNext === parentId ? match.id : null;
+    });
+  }
+
+
+  function getResult(matchId) {
+    var match = matches[matchId];
+
+    if (typeof match.winner !== 'number') {
+      return null;
+    }
+
+    switch ($.inArray(match.winner, match.teams)) {
+      case 0:
+        return [1, 0];
+      case 1:
+        return [0, 1];
+      default:
+        throw Error("Can't find match winner among participants!");
+    }
+  }
 }
 
 
@@ -44,8 +108,8 @@ function setupBrackets(elem, data) {
 
   $(elem).bracket({
     init: {
-      teams: formatted.fixtures,
-      results: formatted.results
+      teams: formatted.teams,
+      results: [formatted.results[0]]
     }
   });
 }

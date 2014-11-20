@@ -14,6 +14,10 @@ div.jQBracket .team.highlight {
   background-color: red !important;
 }
 
+div.jQBracket .team {
+  width: 150px;
+}
+
 .container {
   background-color: rgba(51,51,51,0.4);
   border: 1px solid red;

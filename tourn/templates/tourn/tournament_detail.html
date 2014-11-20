@@ -76,9 +76,11 @@ in case you need them. Enjoy!</p>
     setupBrackets('#brackets', data);
 
     var bracketsOuter = $('#brackets'),
-        bracketsInner = bracketsOuter.find('.bracket');
-    bracketsOuter.height(bracketsInner.height());
+        bracketsInner = bracketsOuter.find('.bracket')
+
+    bracketsOuter.height(Math.max(bracketsOuter.height(), bracketsInner.height()));
     bracketsOuter.width(bracketsInner.width());
+    window.data = data;
   });
 </script>
 {% endblock %}
