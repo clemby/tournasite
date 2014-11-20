@@ -36,8 +36,10 @@
       {% endblock %}
     </noscript>
 
-    {% block content %}
-    {% endblock %}
+    <div class="container">
+      {% block content %}
+      {% endblock %}
+    </div>
 
     {% comment %}
     Allow pages to override the version of jQuery if they need to. Version

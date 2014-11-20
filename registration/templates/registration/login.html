@@ -1,9 +1,8 @@
 {% extends "registration/registration_base.html" %}
 {% load i18n %}
 
-{% block title %}{% trans "Log in" %}{% endblock %}
-
 {% block content %}
+<h3>Login</h3>
 <form method="post" action="">
     {% csrf_token %}
     {{ form.as_p }}
