@@ -126,6 +126,10 @@ class Match(models.Model):
     teams = models.ManyToManyField(Team, related_name='matches', null=True)
     winner = models.ForeignKey(Team, related_name='victories', null=True)
     tournament = models.ForeignKey(Tournament, related_name='matches')
+    winner_next = models.ForeignKey('self', related_name='received_winners',
+                                    null=True)
+    loser_next = models.ForeignKey('self', related_name='received_losers',
+                                   null=True)
 
     def __unicode__(self):
         return unicode(self.__str__())
@@ -134,7 +138,22 @@ class Match(models.Model):
         return '{}: {}'.format(self.tournament.name, self.name)
 
     def set_winner(self, winning_team):
-        if winning_team not in self.teams:
-            raise ValueError('Winning team is not in match')
+        try:
+            self.teams.get(pk=winning_team.pk)
+        except Team.DoesNotExist:
+            raise ValueError(
+                'Winning team {} is not in match'.format(winning_team.name))
 
         self.winner = winning_team
+
+        if self.winner_next:
+            self.winner_next.teams.add(winning_team)
+
+        if self.loser_next:
+            losing_teams = self.loser_next.teams
+
+            for team in self.teams.all():
+                if team != winning_team:
+                    losing_teams.add(team)
+
+        self.save()

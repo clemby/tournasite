@@ -41,14 +41,19 @@ class TournamentDetail(generic.View):
         matches = Match.objects.filter(tournament=tournament)
         return [
             {
+                'id': match.id,
                 'name': match.name,
-                'teams': [team.name for team in match.teams.all()],
-                'winner': match.winner.name if match.winner else None,
+                'teams': [team.id for team in match.teams.all()],
+                'winner': match.winner.id if match.winner else None,
+                'winnerNext':
+                match.winner_next.id if match.winner_next else None,
+                'loserNext':
+                match.loser_next.id if match.loser_next else None,
             }
             for match in matches
         ]
 
-    def get_tournament_data(self, request, tournament):
+    def render_response(self, request, tournament):
         teams_list = self.get_team_list(tournament)
         match_list = self.get_match_list(tournament)
 
@@ -66,7 +71,7 @@ class TournamentDetail(generic.View):
 
     def get(self, request, pk):
         tournament = get_object_or_404(Tournament, pk=pk)
-        return self.get_tournament_data(request, tournament)
+        return self.render_response(request, tournament)
 
 
 class TournIndex(TournamentDetail):
@@ -74,7 +79,7 @@ class TournIndex(TournamentDetail):
 
     def get(self, request):
         tournament = Tournament.get_current_or_404()
-        return self.get_tournament_data(request, tournament)
+        return self.render_response(request, tournament)
 
 
 class PlayerSignupRandomTeam(generic.View):
