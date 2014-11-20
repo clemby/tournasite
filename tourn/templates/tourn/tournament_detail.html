@@ -30,34 +30,32 @@ in case you need them. Enjoy!</p>
 
 
 {% block content %}
-<div class="container">
+{% if tournament.name %}
+<h1>{{ tournament.name }}</h1>
+{% endif %}
 
-  {% if tournament.name %}
-  <h1>{{ tournament.name }}</h1>
-  {% endif %}
+<div id="brackets-container">
+  <h2>Matches</h2>
+  <div id="brackets"></div>
+</div>
 
-  <div id="brackets-container">
-    <h2>Matches</h2>
-    <div id="brackets"></div>
+<div id="team-list-container">
+  <h2>Teams</h2>
+  <div id="team-list">
+    <ul>
+      {% for team in teams %}
+      <li>{{ team.name }}</li>
+      {% endfor %}
+    </ul>
   </div>
+</div>
 
-  <div id="team-list-container">
-    <h2>Teams</h2>
-    <div id="team-list">
-      <ul>
-        {% for team in teams %}
-        <li>{{ team.name }}</li>
-        {% endfor %}
-      </ul>
-    </div>
-  </div>
-
-  {% if tournament.winner %}
-  <div id="winner-container">
-    <h2>Winner</h2>
-    <h3>{{ tournament.winner.name }}</h3>
-  </div>
-  {% endif %}
+{% if tournament.winner %}
+<div id="winner-container">
+  <h2>Winner</h2>
+  <h3>{{ tournament.winner.name }}</h3>
+</div>
+{% endif %}
 {% endblock %}
 
 
