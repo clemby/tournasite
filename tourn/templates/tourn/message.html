@@ -1,8 +1,6 @@
 {% extends 'tourn/base.html' %}
 
-{% block title %}
-{% if title %}<title>{{ title }}</title>{% endif %}
-{% endblock %}
+{% block title %}{% if title %}{{ title }}{% endif %}{% endblock %}
 
 
 {% block content %}

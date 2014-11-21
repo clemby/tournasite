@@ -3,11 +3,7 @@
 
 
 {% block title %}
-<title>
-  {% if tournament_name %}Tournament: {{ tournament_name }}
-  {% else %}Tournament detail
-  {% endif %}
-</title>
+{% if tournament.name %}{{ tournament.name }}{% else %}Tournament detail{% endif %}
 {% endblock %}
 
 
