@@ -47,7 +47,6 @@ class PlayerViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = UserSerializer
     permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
     filter_fields = (
-        'tournament_entries',
         'id',
         'username',
         'administered_teams',
