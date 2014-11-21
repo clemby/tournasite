@@ -92,10 +92,10 @@ class PlayerSignupRandomTeam(generic.View):
 
         already_entered = PlayerRandomTeamEntry.objects.filter(
             player=request.user,
-            tournament=tournament_pk
+            tournament=tournament
         ).exists() or TeamEntry.objects.filter(
-            players__contains=request.user,
-            tournament=tournament_pk
+            players__pk__contains=request.user.pk,
+            tournament=tournament
         ).exists()
 
         if already_entered:
