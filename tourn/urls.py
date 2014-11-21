@@ -14,6 +14,7 @@ urlpatterns = patterns(
     url(r'^teams/(?P<pk>\d+)/$',
         views.TeamDetail.as_view(),
         name='team_detail'),
+    url(r'^teams/create/$', views.TeamCreate.as_view(), name='team_create'),
 
     url(r'^tournaments/$',
         views.TournamentList.as_view(),

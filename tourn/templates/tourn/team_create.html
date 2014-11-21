@@ -1,0 +1,12 @@
+{% extends 'tourn/base.html' %}
+
+{% block content %}
+<h1>Create team</h1>
+<form id="team_form" method="post" action="{% url 'tourn:team_create' %}">
+  {% csrf_token %}
+  <div>
+    {{ form.as_ul }}
+  </div>
+  <input type="submit" name="submit" value="Create">
+</form>
+{% endblock %}

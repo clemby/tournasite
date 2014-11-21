@@ -3,7 +3,8 @@ import json
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views import generic
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
+from django.core.urlresolvers import reverse
 
 from .models import (
     Team,
@@ -11,6 +12,10 @@ from .models import (
     TeamEntry,
     PlayerRandomTeamEntry,
     Match,
+)
+
+from .forms import (
+    TeamForm,
 )
 
 
@@ -130,3 +135,22 @@ class TeamList(generic.ListView):
     model = Team
     template_name = 'tourn/team_list.html'
     context_object_name = 'team_list'
+
+
+class TeamCreate(generic.View):
+    template_name = 'tourn/team_create.html'
+
+    def get(self, request):
+        form = TeamForm()
+        return render(request, self.template_name, {
+            'form': form,
+        })
+
+    def post(self, request):
+        form = TeamForm(request.POST)
+        if form.is_valid():
+            form.instance.creator = request.user
+            form.save(commit=True)
+            return render(request, TeamList.template_name)
+
+        return redirect(reverse('tourn:team_list'))
