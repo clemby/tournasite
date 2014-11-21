@@ -20,7 +20,7 @@
     {% endblock %}
   </head>
 
-  <body>
+  <body role="document">
     <style>body { background-image: url("{% static 'img/bg.svg' %}"); }</style>
     <noscript>
       {% block noscript %}
@@ -34,10 +34,49 @@
       {% endblock %}
     </noscript>
 
-    <div class="container">
-      {% block navbar %}
-      {% endblock %}
+    {% block navbar %}
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div>
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">OpenRA Stats</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="#">Home</a></li>
+            <li><a href="{% url 'tourn:index' %}">Tournaments</a></li>
+          </ul>
 
+          {% if user.is_authenticated %}
+          <ul class="nav pull-right">
+            <li class="dropdown btn">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                {{ user.username }}
+                <b class="caret"></b>
+              </a>
+              <ul class="dropdown-menu">
+                <li><a href="{% url 'auth_logout' %}">Log out</a></li>
+              </ul>
+            </li>
+          </ul>
+          {% else %}
+          <ul class="btn nav pull-right">
+            <li><a href="{% url 'auth_login' %}">Log in</a></li>
+          </ul>
+          {% endif %}
+
+        </div><!--/.nav-collapse -->
+
+      </div>
+    </nav>
+    {% endblock %}
+
+    <div class="container content-container">
       {% block content %}
       {% endblock %}
     </div>
@@ -58,6 +97,8 @@
       src="{% static 'bootstrap/dist/js/bootstrap.min.js' %}" {% else %}
       src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"{% endif %}>
     </script>
+
+    <script type="text/javascript" src="{% static 'js/page-utils.js' %}"></script>
     {% endblock %}
 
     {% block scripts %}
