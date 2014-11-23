@@ -20,9 +20,16 @@ ul.errorlist>li {
 }
 
 form li {
-  list-style-type: none;
   margin-bottom: 5px;
-  margin-top: 5px;
+  margin-top: 10px;
+}
+
+form li span.helptext {
+  display: block;
+}
+
+form li label[for] {
+  min-width: 100px;
 }
 
 /* Everything but the jumbotron gets side spacing for mobile first views */

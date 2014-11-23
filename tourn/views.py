@@ -15,7 +15,7 @@ from .models import (
 )
 
 from .forms import (
-    TeamForm,
+    TeamCreateForm,
 )
 
 
@@ -141,13 +141,13 @@ class TeamCreate(generic.View):
     template_name = 'tourn/team_create.html'
 
     def get(self, request):
-        form = TeamForm()
+        form = TeamCreateForm()
         return render(request, self.template_name, {
             'form': form,
         })
 
     def post(self, request):
-        form = TeamForm(request.POST)
+        form = TeamCreateForm(request.POST)
         if form.is_valid():
             form.instance.creator = request.user
             form.save(commit=True)

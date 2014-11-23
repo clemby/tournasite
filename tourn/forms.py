@@ -1,10 +1,11 @@
-from django.forms import ModelForm
+from django import forms
+
 from .models import (
     Team,
 )
 
 
-class TeamForm(ModelForm):
+class TeamCreateForm(forms.ModelForm):
     class Meta:
         model = Team
         fields = ('name', 'admins')

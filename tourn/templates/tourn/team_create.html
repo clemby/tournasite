@@ -2,11 +2,10 @@
 
 {% block content %}
 <h1>Create team</h1>
-<form id="team_form" method="post" action="{% url 'tourn:team_create' %}">
-  {% csrf_token %}
-  <div>
+<form id="team_form" method="post" action="">{% csrf_token %}
+  <ul class="list-unstyled">
     {{ form.as_ul }}
-  </div>
+  </ul>
   <input type="submit" name="submit" value="Create">
 </form>
 {% endblock %}
