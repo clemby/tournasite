@@ -65,6 +65,10 @@ class Tournament(models.Model):
         values_list = self.entries.values_list('players__username')
         return [tup[0] for tup in values_list]
 
+    @property
+    def has_started(self):
+        return self.planned_start >= timezone.now()
+
 
 class Team(models.Model):
     name = models.CharField(max_length=40, blank=False, unique=True)
@@ -95,11 +99,7 @@ class Team(models.Model):
         return [tup[0] for tup in values_list]
 
     def is_admin(self, user):
-        try:
-            self.admins.get(pk=user.pk)
-        except:
-            return False
-        return True
+        return self.admins.filter(pk=user.pk).exists()
 
 
 class TeamEntry(models.Model):
