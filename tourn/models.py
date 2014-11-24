@@ -14,7 +14,7 @@ class Tournament(models.Model):
     max_teams_per_match = models.SmallIntegerField(default=2)
 
     planned_start = models.DateTimeField()
-    planned_finish = models.DateTimeField(null=True)
+    planned_finish = models.DateTimeField(null=True, blank=True)
 
     @classmethod
     def get_current(cls):
@@ -131,13 +131,15 @@ class PlayerRandomTeamEntry(models.Model):
 
 class Match(models.Model):
     name = models.CharField(max_length=40, blank=True)
-    teams = models.ManyToManyField(Team, related_name='matches', null=True)
-    winner = models.ForeignKey(Team, related_name='victories', null=True)
+    teams = models.ManyToManyField(Team, related_name='matches', null=True,
+                                   blank=True)
+    winner = models.ForeignKey(Team, related_name='victories', null=True,
+                               blank=True)
     tournament = models.ForeignKey(Tournament, related_name='matches')
     winner_next = models.ForeignKey('self', related_name='received_winners',
-                                    null=True)
+                                    null=True, blank=True)
     loser_next = models.ForeignKey('self', related_name='received_losers',
-                                   null=True)
+                                   null=True, blank=True)
 
     class Meta:
         verbose_name_plural = 'Matches'
