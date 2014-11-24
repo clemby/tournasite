@@ -110,6 +110,7 @@ class TeamEntry(models.Model):
 
     class Meta:
         verbose_name_plural = 'Team entries'
+        unique_together = ('tournament', 'team')
 
     def get_member_names(self):
         return [tup[0] for tup in self.players.values_list('username')]
@@ -125,6 +126,7 @@ class PlayerRandomTeamEntry(models.Model):
 
     class Meta:
         verbose_name_plural = 'Single player entries'
+        unique_together = ('tournament', 'player')
 
 
 class Match(models.Model):
