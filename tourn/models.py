@@ -108,6 +108,9 @@ class TeamEntry(models.Model):
     players = models.ManyToManyField(User, related_name='tournament_entries')
     team = models.ForeignKey(Team, related_name='entries')
 
+    class Meta:
+        verbose_name_plural = 'Team entries'
+
     def get_member_names(self):
         return [tup[0] for tup in self.players.values_list('username')]
 
@@ -120,6 +123,9 @@ class PlayerRandomTeamEntry(models.Model):
     player = models.ForeignKey(
         User, related_name='tournament_random_team_entries')
 
+    class Meta:
+        verbose_name_plural = 'Single player entries'
+
 
 class Match(models.Model):
     name = models.CharField(max_length=40, blank=True)
@@ -130,6 +136,9 @@ class Match(models.Model):
                                     null=True)
     loser_next = models.ForeignKey('self', related_name='received_losers',
                                    null=True)
+
+    class Meta:
+        verbose_name_plural = 'Matches'
 
     def __unicode__(self):
         return unicode(self.__str__())

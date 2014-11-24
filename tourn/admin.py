@@ -8,17 +8,26 @@ class MatchInline(admin.TabularInline):
     extra = 0
 
 
-class TournamentAdmin(admin.ModelAdmin):
-    inlines = (MatchInline,)
-    list_display = ('name', 'planned_start', 'planned_finish')
-
-
-admin.site.register(models.Tournament, TournamentAdmin)
+class PlayerRandomTeamEntryInline(admin.TabularInline):
+    model = models.PlayerRandomTeamEntry
+    extra = 0
 
 
 class TeamEntryInline(admin.TabularInline):
     model = models.TeamEntry
     extra = 0
+
+
+class TournamentAdmin(admin.ModelAdmin):
+    inlines = (
+        MatchInline,
+        TeamEntryInline,
+        PlayerRandomTeamEntryInline,
+    )
+    list_display = ('name', 'planned_start', 'planned_finish')
+
+
+admin.site.register(models.Tournament, TournamentAdmin)
 
 
 class TeamAdmin(admin.ModelAdmin):
