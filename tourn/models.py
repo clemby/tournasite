@@ -131,15 +131,33 @@ class PlayerRandomTeamEntry(models.Model):
 
 class Match(models.Model):
     name = models.CharField(max_length=40, blank=True)
-    teams = models.ManyToManyField(Team, related_name='matches', null=True,
-                                   blank=True)
-    winner = models.ForeignKey(Team, related_name='victories', null=True,
-                               blank=True)
+    teams = models.ManyToManyField(
+        Team,
+        related_name='matches',
+        null=True,
+        blank=True
+    )
+    winner = models.ForeignKey(
+        Team,
+        related_name='victories',
+        null=True,
+        blank=True
+    )
     tournament = models.ForeignKey(Tournament, related_name='matches')
-    winner_next = models.ForeignKey('self', related_name='received_winners',
-                                    null=True, blank=True)
-    loser_next = models.ForeignKey('self', related_name='received_losers',
-                                   null=True, blank=True)
+    winner_next = models.ForeignKey(
+        'self',
+        related_name='received_winners',
+        null=True,
+        blank=True,
+        help_text='Winners will progress to the chosen match',
+    )
+    loser_next = models.ForeignKey(
+        'self',
+        related_name='received_losers',
+        null=True,
+        blank=True,
+        help_text='Losers will progress to the chosen match',
+    )
 
     class Meta:
         verbose_name_plural = 'Matches'
