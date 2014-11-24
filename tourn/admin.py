@@ -1,11 +1,13 @@
 from django.contrib import admin
 
 from . import models
+from .forms import MatchForm
 
 
 class MatchInline(admin.TabularInline):
     model = models.Match
     extra = 0
+    form = MatchForm
 
 
 class PlayerRandomTeamEntryInline(admin.TabularInline):

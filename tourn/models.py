@@ -101,6 +101,9 @@ class Team(models.Model):
     def is_admin(self, user):
         return self.admins.filter(pk=user.pk).exists()
 
+    def has_entered(self, tournament):
+        return self.entries.filter(tournament=tournament).exists()
+
 
 class TeamEntry(models.Model):
     """A team's entry into a tournament."""

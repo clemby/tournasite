@@ -13,13 +13,16 @@ from . import views
 
 
 class RequiresUsersTestCase(TestCase):
+    def create_user(self, **kwargs):
+        user = User(**kwargs)
+        user.save()
+        return user
+
     def setup_users(self):
         self.users = [
-            User(username='Test user {}'.format(i))
-            for i in [1, 2, 3, 4, 5, 6, 7, 8]
+            self.create_user(username='Test user {}'.format(i))
+            for i in range(8)
         ]
-        for user in self.users:
-            user.save()
 
 
 class RequiresTournamentTestCase(TestCase):
@@ -267,6 +270,20 @@ class TeamGetCurrentMembersTestCase(RequiresUsersTestCase,
                 self.team.current_member_names,
                 [self.users[4].username, self.users[5].username]
             )
+
+
+class TeamHasEnteredTournamentTestCase(RequiresTeamEntriesTestCase):
+    def setUp(self):
+        self.user = self.create_user()
+        self.team = self.create_team(creator=self.user)
+        self.setup_tournament()
+
+    def test_team_has_entered_returns_false_if_no_entries(self):
+        self.assertFalse(self.team.has_entered(self.tournament))
+
+    def test_team_has_entered_returns_true_if_no_entries(self):
+        self.create_team_entry(team=self.team, tournament=self.tournament)
+        self.assertTrue(self.team.has_entered(self.tournament))
 
 
 class ViewTestCase(TestCase):
