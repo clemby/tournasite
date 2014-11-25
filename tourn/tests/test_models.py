@@ -1,93 +1,13 @@
 from datetime import datetime, timedelta
 
-from django.http import Http404
-from django.test import TestCase
-from django.utils import timezone
-from django.core.urlresolvers import reverse
-from django.contrib.auth.models import User
-
 import mock
+from django.http import Http404
 
-from . import models
-from . import views
-
-
-class RequiresUsersTestCase(TestCase):
-    def create_user(self, **kwargs):
-        user = User(**kwargs)
-        user.save()
-        return user
-
-    def setup_users(self):
-        self.users = [
-            self.create_user(username='Test user {}'.format(i))
-            for i in range(8)
-        ]
+from .. import models
+from . import util as testutil
 
 
-class RequiresTournamentTestCase(TestCase):
-    def create_tournament(self, **kwargs):
-        if 'name' not in kwargs:
-            kwargs['name'] = 'test tournament'
-
-        if 'planned_start' not in kwargs:
-            kwargs['planned_start'] = timezone.now()
-
-        tournament = models.Tournament(**kwargs)
-        tournament.save()
-        return tournament
-
-    def setup_tournament(self, **kwargs):
-        self.tournament = self.create_tournament(**kwargs)
-
-
-class RequiresTeamsTestCase(TestCase):
-    def create_team(self, **kwargs):
-        team = models.Team(**kwargs)
-        team.save()
-        return team
-
-    def setup_teams(self):
-        user_range = range(len(self.users) / 2)
-
-        self.teams = [
-            self.create_team(
-                name='Team {}'.format(i),
-                creator=self.users[2 * i]
-            )
-            for i in user_range
-        ]
-
-
-class RequiresTeamEntriesTestCase(RequiresUsersTestCase,
-                                  RequiresTournamentTestCase,
-                                  RequiresTeamsTestCase):
-    def create_team_entry(self, tournament, team, players=None):
-        entry = models.TeamEntry(tournament=tournament, team=team)
-        entry.save()
-
-        if players:
-            entry.players = players
-            entry.save()
-
-        return entry
-
-    def setup_team_entries(self):
-        self.setup_users()
-        self.setup_teams()
-        self.setup_tournament()
-
-        self.team_entries = [
-            self.create_team_entry(
-                tournament=self.tournament,
-                team=team,
-                players=(self.users[2 * i], self.users[2 * i + 1])
-            )
-            for i, team in enumerate(self.teams)
-        ]
-
-
-class TournamentIsFFATestCase(RequiresTournamentTestCase):
+class TournamentIsFFATestCase(testutil.RequiresTournamentTestCase):
     def setUp(self):
         self.setup_tournament()
 
@@ -101,7 +21,7 @@ class TournamentIsFFATestCase(RequiresTournamentTestCase):
         self.assertTrue(self.tournament.is_ffa)
 
 
-class TournamentEnrolledNamesTestCase(RequiresTeamEntriesTestCase):
+class TournamentEnrolledNamesTestCase(testutil.RequiresTeamEntriesTestCase):
     def setUp(self):
         self.setup_team_entries()
 
@@ -118,7 +38,7 @@ class TournamentEnrolledNamesTestCase(RequiresTeamEntriesTestCase):
         )
 
 
-class TournamentContainsPlayersTestCase(RequiresTeamEntriesTestCase):
+class TournamentContainsPlayersTestCase(testutil.RequiresTeamEntriesTestCase):
     def setUp(self):
         self.setup_team_entries()
 
@@ -131,7 +51,7 @@ class TournamentContainsPlayersTestCase(RequiresTeamEntriesTestCase):
         self.assertTrue(self.tournament.contains_player(user))
 
 
-class TournamentGetCurrentTestCase(RequiresTournamentTestCase):
+class TournamentGetCurrentTestCase(testutil.RequiresTournamentTestCase):
     def setup_tournaments(self):
         self.dates = [
             datetime(2014, 1, 1),
@@ -199,7 +119,7 @@ class TournamentGetCurrentTestCase(RequiresTournamentTestCase):
         self.assertEqual(models.Tournament.get_current(), None)
 
 
-class TournamentGetCurrentOr404TestCase(RequiresTournamentTestCase):
+class TournamentGetCurrentOr404TestCase(testutil.RequiresTournamentTestCase):
     def test_get_current_or_404_gets_current_if_possible(self):
         tournament = models.Tournament(
             name='tournament',
@@ -225,9 +145,9 @@ class TournamentGetCurrentOr404TestCase(RequiresTournamentTestCase):
             )
 
 
-class TeamGetCurrentMembersTestCase(RequiresUsersTestCase,
-                                    RequiresTeamsTestCase,
-                                    RequiresTournamentTestCase):
+class TeamGetCurrentMembersTestCase(testutil.RequiresUsersTestCase,
+                                    testutil.RequiresTeamsTestCase,
+                                    testutil.RequiresTournamentTestCase):
     def setUp(self):
         self.setup_users()
 
@@ -285,7 +205,7 @@ class TeamGetCurrentMembersTestCase(RequiresUsersTestCase,
             )
 
 
-class TeamHasEnteredTournamentTestCase(RequiresTeamEntriesTestCase):
+class TeamHasEnteredTournamentTestCase(testutil.RequiresTeamEntriesTestCase):
     def setUp(self):
         self.user = self.create_user()
         self.team = self.create_team(creator=self.user)
@@ -297,65 +217,3 @@ class TeamHasEnteredTournamentTestCase(RequiresTeamEntriesTestCase):
     def test_team_has_entered_returns_true_if_no_entries(self):
         self.create_team_entry(team=self.team, tournament=self.tournament)
         self.assertTrue(self.team.has_entered(self.tournament))
-
-
-class ViewTestCase(TestCase):
-    test_url = None
-
-    def test_returns_200_status_code(self):
-        # Don't run for this (abstract) class, as there's no test_url.
-        if self.__class__ != ViewTestCase:
-            response = self.client.get(self.test_url)
-            self.assertEqual(response.status_code, 200)
-
-
-class TournamentDetailViewTestCase(RequiresTeamEntriesTestCase, ViewTestCase):
-    def setUp(self):
-        self.setup_team_entries()
-        self.test_url = reverse('tourn:tournament_detail',
-                                args=(self.tournament.pk,))
-        self.view = views.TournamentDetail()
-
-        self.other_tournament = self.create_tournament(name='tournament 2')
-        self.other_teams = [
-            self.create_team(
-                name='Other team {}'.format(i),
-                creator=self.users[2 * i]
-            )
-            for i in range(len(self.teams))
-        ]
-
-        self.other_entries = [
-            self.create_team_entry(
-                tournament=self.other_tournament,
-                team=team,
-                players=(self.users[2 * i], self.users[2 * i + 1])
-            )
-            for i, team in enumerate(self.other_teams)
-        ]
-
-        self.other_matches = [
-            models.Match(name='Other match', tournament=self.other_tournament)
-        ]
-        for match in self.other_matches:
-            match.save()
-
-    def test_get_team_list_only_uses_entries_from_that_tournament(self):
-        team_objects = self.view.get_team_list(tournament=self.tournament)
-        for team_obj in team_objects:
-            self.assertFalse(team_obj['name'].startswith('Other'))
-
-    def test_get_match_list_only_uses_entries_from_that_tournament(self):
-        match_objects = self.view.get_match_list(tournament=self.tournament)
-        for match_obj in match_objects:
-            self.assertFalse(match_obj['name'].startswith('Other'))
-
-
-class TournamentListTestCase(RequiresTournamentTestCase, ViewTestCase):
-    test_url = reverse('tourn:tournament_list')
-
-    def setUp(self):
-        self.tournaments = [
-            self.create_tournament(name='tournament {}'.format(i))
-            for i in range(0, 4)
-        ]
