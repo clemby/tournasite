@@ -46,6 +46,15 @@ in case you need them. Enjoy!</p>
   </div>
 </div>
 
+{% if not tournament.has_started %}
+<div id="signup-container">
+  <h2>Sign up</h2>
+  <p class="text">This tournament hasn't started yet.
+  <a href="{% url 'tourn:tournament_signup_main' tournament.id %}" target="_blank">Signup?</a>
+  </p>
+</div>
+{% endif %}
+
 {% if tournament.winner %}
 <div id="winner-container">
   <h2>Winner</h2>

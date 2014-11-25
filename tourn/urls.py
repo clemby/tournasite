@@ -11,7 +11,7 @@ urlpatterns = patterns(
     url(r'^error/$', views.MessageView.as_view(), name='error'),
 
     url(r'^teams/$', views.TeamList.as_view(), name='team_list'),
-    url(r'^teams/(?P<pk>\d+)/$',
+    url(r'^teams/(?P<team_pk>\d+)/$',
         views.TeamDetail.as_view(),
         name='team_detail'),
     url(r'^teams/create/$', views.TeamCreate.as_view(), name='team_create'),
@@ -23,7 +23,13 @@ urlpatterns = patterns(
         views.TournamentDetail.as_view(),
         name='tournament_detail'),
 
-    url(r'^signup/(?P<tournament_pk>\d+)/random/$',
-        views.PlayerSignupRandomTeam.as_view(),
-        name='tournament_signup_random_team'),
+    url(r'^tournaments/(?P<tournament_pk>\d+)/signup/$',
+        views.SignupMain.as_view(),
+        name='tournament_signup_main'),
+    url(r'^tournaments/(?P<tournament_pk>\d+)/signup-team/$',
+        views.TeamSignup.as_view(),
+        name='tournament_signup_own_team'),
+    url(r'^tournaments/(?P<tournament_pk>\d+)/signup-player/$',
+        views.PlayerSignup.as_view(),
+        name='tournament_signup_player'),
 )

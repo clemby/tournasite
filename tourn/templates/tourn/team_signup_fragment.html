@@ -1,0 +1,8 @@
+<h3>Enter a team</h3>
+<form method="post" action="{% url 'tourn:tournament_signup_own_team' tournament.id %}">
+  {% csrf_token %}
+  <ul class="list-unstyled">
+    {{ form.as_ul }}
+  </ul>
+  <button type="submit" value="Submit">Sign up!</button>
+</form>

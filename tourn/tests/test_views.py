@@ -1,18 +1,18 @@
-from django.test import TestCase
 from django.core.urlresolvers import reverse
 
 from .. import models
 from .. import views
+from .. import forms
 
 from . import util as testutil
 
 
-class ViewTestCase(TestCase):
+class ViewTestCase(object):
     test_url = None
 
     def test_returns_200_status_code(self):
         # Don't run for this (abstract) class, as there's no test_url.
-        if self.__class__ != ViewTestCase:
+        if self.__class__ != ViewTestCase and self.test_url is not False:
             response = self.client.get(self.test_url)
             self.assertEqual(response.status_code, 200)
 
@@ -69,3 +69,61 @@ class TournamentListTestCase(testutil.RequiresTournamentTestCase,
             self.create_tournament(name='tournament {}'.format(i))
             for i in range(0, 4)
         ]
+
+
+class PlayerSignupMixinTestCase(testutil.RequiresTeamEntriesTestCase,
+                                ViewTestCase):
+    test_url = False
+
+    def setUp(self):
+        self.setup_tournament()
+        self.setup_team_entries()
+        self.mixin = views.TeamSignupMixin()
+
+    def test_get_team_signup_form_or_none_returns_none_if_no_teams(self):
+        self.assertEqual(
+            self.mixin.get_team_signup_form_or_none(
+                player_pk=self.users[0].pk,
+                tournament_pk=self.tournament.pk
+            ),
+            None
+        )
+
+    def test_get_team_signup_form_or_none_returns_form_if_teams(self):
+        self.teams[0].admins.add(self.users[0])
+        self.assertIsInstance(
+            self.mixin.get_team_signup_form_or_none(
+                player_pk=self.users[0].pk,
+                tournament_pk=self.tournament.pk
+            ),
+            forms.TeamEntryForm
+        )
+
+
+class TeamSignupMixinTestCase(testutil.RequiresTeamEntriesTestCase,
+                              ViewTestCase):
+    test_url = False
+
+    def setUp(self):
+        self.setup_tournament()
+        self.setup_team_entries()
+        self.mixin = views.TeamSignupMixin()
+
+    def test_get_team_signup_form_or_none_returns_none_if_no_teams(self):
+        self.assertEqual(
+            self.mixin.get_team_signup_form_or_none(
+                player_pk=self.users[0].pk,
+                tournament_pk=self.tournament.pk
+            ),
+            None
+        )
+
+    def test_get_team_signup_form_or_none_returns_form_if_teams(self):
+        self.teams[0].admins.add(self.users[0])
+        self.assertIsInstance(
+            self.mixin.get_team_signup_form_or_none(
+                player_pk=self.users[0].pk,
+                tournament_pk=self.tournament.pk
+            ),
+            forms.TeamEntryForm
+        )

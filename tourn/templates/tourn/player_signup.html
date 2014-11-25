@@ -1,0 +1,14 @@
+{% extends 'tourn/base.html' %}
+
+{% block content %}
+<h1>{% if tournament.name %}Signup: {{ tournament.name }}{% else %}Tournament signup{% endif %}</h1>
+
+<form method="post" action="{% url 'tourn:tournament_signup_player' tournament.id %}">
+  {% csrf_token %}
+  <ul class="list-unstyled">
+    {{ form.as_ul }}
+  </ul>
+  <button type="submit" value="Submit">Sign up!</button>
+</form>
+
+{% endblock %}
