@@ -106,11 +106,11 @@ class TeamEntryFormTestCase(testutil.RequiresTeamEntriesTestCase):
         self.assertIn('has already entered', error)
 
     @mock.patch(
-        'tourn.forms.TeamEntryForm.get_player_team_entry_errors',
+        'tourn.forms.EntryFormBase.get_player_team_entry_errors',
         mock.Mock(side_effect=lambda *args, **kwargs: ['team_entry_errors'])
     )
     @mock.patch(
-        'tourn.forms.TeamEntryForm.get_player_lone_entry_errors',
+        'tourn.forms.EntryFormBase.get_player_lone_entry_errors',
         mock.Mock(side_effect=lambda *args, **kwargs: ['lone_entry_errors'])
     )
     def test_clean_adds_player_errors_if_any(self):
@@ -125,7 +125,34 @@ class TeamEntryFormTestCase(testutil.RequiresTeamEntriesTestCase):
 
         self.form.is_valid()
 
-        self.assertEqual(
+        self.assertItemsEqual(
             self.form.errors.get('players'),
+            ['team_entry_errors', 'lone_entry_errors']
+        )
+
+
+class PlayerEntryFormTestCase(testutil.RequiresTeamEntriesTestCase):
+    def setUp(self):
+        self.setup_users()
+        self.setup_tournament()
+
+    @mock.patch(
+        'tourn.forms.EntryFormBase.get_player_team_entry_errors',
+        mock.Mock(side_effect=lambda *args, **kwargs: ['team_entry_errors'])
+    )
+    @mock.patch(
+        'tourn.forms.EntryFormBase.get_player_lone_entry_errors',
+        mock.Mock(side_effect=lambda *args, **kwargs: ['lone_entry_errors'])
+    )
+    def test_clean_adds_player_entry_errors(self):
+        self.form = forms.PlayerEntryForm({
+            'player': self.users[0].pk,
+            'tournament': self.tournament.pk,
+        })
+
+        self.form.is_valid()
+
+        self.assertItemsEqual(
+            self.form.errors.get('player'),
             ['team_entry_errors', 'lone_entry_errors']
         )

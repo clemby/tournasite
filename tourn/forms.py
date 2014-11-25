@@ -87,6 +87,33 @@ class TeamEntryForm(EntryFormBase):
         return self.cleaned_data
 
 
+class PlayerEntryForm(EntryFormBase):
+    class Meta:
+        model = PlayerRandomTeamEntry
+        fields = ('player', 'tournament')
+
+    def clean(self):
+        """Checks the player hasn't already entered."""
+        cleaned_data = super(PlayerEntryForm, self).clean()
+
+        player = cleaned_data.get('player')
+        tournament = cleaned_data.get('tournament')
+
+        if player and tournament:
+            errors = self.get_player_lone_entry_errors(
+                players=(player,),
+                tournament=tournament
+            ) + self.get_player_team_entry_errors(
+                players=(player,),
+                tournament=tournament
+            )
+
+            if errors:
+                self.add_error('player', errors)
+
+        return self.cleaned_data
+
+
 class MatchForm(forms.ModelForm):
     class Meta:
         model = Match
