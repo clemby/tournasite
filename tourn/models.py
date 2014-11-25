@@ -69,6 +69,9 @@ class Tournament(models.Model):
     def has_started(self):
         return self.planned_start >= timezone.now()
 
+    def contains_player(self, player):
+        return self.entries.filter(players__pk__contains=player.pk)
+
 
 class Team(models.Model):
     name = models.CharField(max_length=40, blank=False, unique=True)

@@ -118,6 +118,19 @@ class TournamentEnrolledNamesTestCase(RequiresTeamEntriesTestCase):
         )
 
 
+class TournamentContainsPlayersTestCase(RequiresTeamEntriesTestCase):
+    def setUp(self):
+        self.setup_team_entries()
+
+    def test_contains_player_returns_false_if_user_not_entered(self):
+        user = self.create_user()
+        self.assertFalse(self.tournament.contains_player(user))
+
+    def test_contains_player_returns_true_if_user_has_entered(self):
+        user = self.users[0]
+        self.assertTrue(self.tournament.contains_player(user))
+
+
 class TournamentGetCurrentTestCase(RequiresTournamentTestCase):
     def setup_tournaments(self):
         self.dates = [
