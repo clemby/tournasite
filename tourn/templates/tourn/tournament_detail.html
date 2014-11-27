@@ -10,7 +10,7 @@
 {% block links %}
 <link rel="stylesheet" href="{% static 'tourn/css/base.css' %}" />
 <link rel="stylesheet"
-  href="{% static 'jquery.bracket/dist/jquery.bracket.min.css' %}" />
+  href="{% static 'jquery-bracket/dist/jquery.bracket.min.css' %}" />
 {% endblock %}
 
 
@@ -66,24 +66,25 @@ in case you need them. Enjoy!</p>
 
 {% block scripts %}
 <script type="text/javascript"
-  src="{% static 'jquery.bracket/dist/jquery.bracket.js' %}">
+  src="{% static 'jquery-bracket/dist/jquery.bracket.min.js' %}">
 </script>
 
 <script type="text/javascript"
-  src="{% static 'tourn/js/format-api-response.js' %}">
+  src="{% static 'tournament-bracket-converter/dist/tournament-bracket-converter.js' %}">
 </script>
 
 <script type="text/javascript">
   $(function() {
-    var data = {% autoescape off %}{{ as_json }}{% endautoescape %};
-    setupBrackets('#brackets', data);
+    var data = {% autoescape off %}{{ as_json }}{% endautoescape %},
+        formatted = lib.formatTournamentData(data);
+
+    $('#brackets').bracket(formatted);
 
     var bracketsOuter = $('#brackets'),
         bracketsInner = bracketsOuter.find('.bracket')
 
     bracketsOuter.height(Math.max(bracketsOuter.height(), bracketsInner.height()));
     bracketsOuter.width(bracketsInner.width());
-    window.data = data;
   });
 </script>
 {% endblock %}
