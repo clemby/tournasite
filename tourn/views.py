@@ -53,9 +53,9 @@ class TournamentDetail(generic.View):
                 'name': match.name,
                 'teams': [team.id for team in match.teams.all()],
                 'winner': match.winner.id if match.winner else None,
-                'winnerNext':
+                'winner_next':
                 match.winner_next.id if match.winner_next else None,
-                'loserNext':
+                'loser_next':
                 match.loser_next.id if match.loser_next else None,
             }
             for match in matches

@@ -17,7 +17,7 @@
   "dependencies": {
     "jquery": "1",
     "jquery-bracket": "https://github.com/teijo/jquery-bracket.git",
-    "tournament-bracket-converter": "https://github.com/clemby/tournament-bracket-converter.git",
+    "tournament-bracket-converter": "https://github.com/clemby/tournament-bracket-converter.git#~1.0.0",
     "bootstrap": "~3.3.1"
   }
 }
