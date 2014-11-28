@@ -1,3 +1,14 @@
 local_settings.py
 /db/
 /data/
+
+# Common ignores
+*.sw[op]
+*.pyc
+*.tmp.txt
+*.orig
+*.egg-info
+/__pycache__
+/node_modules
+/bower_components
+
