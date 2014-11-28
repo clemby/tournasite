@@ -40,7 +40,7 @@ in case you need them. Enjoy!</p>
   <div id="team-list">
     <ul>
       {% for team in teams %}
-      <li>{{ team.name }}</li>
+      <li>{{ team.name }}{% if team.short_name %} ({{ team.short_name }}){% endif %}</li>
       {% endfor %}
     </ul>
   </div>

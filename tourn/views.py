@@ -38,7 +38,8 @@ class TournamentDetail(generic.View):
         entries = TeamEntry.objects.filter(tournament=tournament)
         return [
             {
-                'name': entry.team.short_name or entry.team.name,
+                'name': entry.team.name,
+                'short_name': entry.team.short_name,
                 'id': entry.team.id,
                 'members': list(entry.players.values('username', 'id')),
             }
