@@ -1,4 +1,3 @@
-from django.core.exceptions import ValidationError
 from django import forms
 
 from .models import (
@@ -129,11 +128,21 @@ class MatchForm(forms.ModelForm):
                 team.name for team in teams if not team.has_entered(tournament)
             ]
             if missing_teams:
-                raise ValidationError({
-                    'teams': [
-                        "{} hasn't entered the tournament".format(name)
-                        for name in missing_teams
-                    ]
-                })
+                self.add_error('teams', [
+                    "{} hasn't entered the tournament".format(name)
+                    for name in missing_teams
+                ])
+
+        winner_next = self.cleaned_data.get('winner_next')
+        if winner_next and tournament and \
+                winner_next.tournament != tournament:
+            self.add_error('winner_next',
+                           'winner_next is not in this tournament')
+
+        loser_next = self.cleaned_data.get('loser_next')
+        if loser_next and tournament and \
+                loser_next.tournament != tournament:
+            self.add_error('loser_next',
+                           'loser_next is not in this tournament')
 
         return self.cleaned_data
