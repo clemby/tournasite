@@ -80,11 +80,13 @@ in case you need them. Enjoy!</p>
 
     $('#brackets').bracket(formatted);
 
-    var bracketsOuter = $('#brackets'),
-        bracketsInner = bracketsOuter.find('.bracket')
+    var outer = $('#brackets'),
+        inner = outer.find('.bracket, .finals, .loserBracket'),
+        heights = $.map(inner, function(i) { return $(i).height(); }),
+        widths = $.map(inner, function(i) { return $(i).width(); });
 
-    bracketsOuter.height(Math.max(bracketsOuter.height(), bracketsInner.height()));
-    bracketsOuter.width(bracketsInner.width());
+    outer.height(Math.max.apply(Math, heights));
+    outer.width(Math.max.apply(Math, widths));
   });
 </script>
 {% endblock %}
