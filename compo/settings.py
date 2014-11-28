@@ -142,7 +142,7 @@ REST_FRAMEWORK = {
 # Registration/login options.
 ACCOUNT_ACTIVATION_DAYS = 1
 REGISTRATION_AUTO_LOGIN = False
-LOGIN_REDIRECT_URL = '/tourn/'
+LOGIN_REDIRECT_URL = '/tourn/tournaments/'
 
 
 # For django.contrib.sites
