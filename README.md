@@ -4,13 +4,13 @@ Set up a virtualenv; for example, using virtualenvwrapper:
     mkvirtualenv tournasite
     workon tournasite
   
-Install requirements
+Install requirements:
 
     pip install -r requirements.txt
 
-and, if you want to run tests, dev-requirements:
+If you want to run tests, also install dev-requirements:
 
-    pip install -r requirements.txt
+    pip install -r dev-requirements.txt
 
 
 You'll need to put local settings in `compo/local_settings.py`. For convenience
