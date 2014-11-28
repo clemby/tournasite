@@ -75,6 +75,7 @@ class Tournament(models.Model):
 
 class Team(models.Model):
     name = models.CharField(max_length=40, blank=False, unique=True)
+    short_name = models.CharField(max_length=20, blank=True, default='')
     creator = models.ForeignKey(User, related_name='created_teams')
     admins = models.ManyToManyField(User, related_name='administered_teams')
 
