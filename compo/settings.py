@@ -1,5 +1,5 @@
 """
-Django settings for openra_stats project.
+Django settings for compo project.
 
 For more information on this file, see
 https://docs.djangoproject.com/en/1.7/topics/settings/
@@ -68,9 +68,9 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.messages.context_processors.messages'
 )
 
-ROOT_URLCONF = 'openra_stats.urls'
+ROOT_URLCONF = 'compo.urls'
 
-WSGI_APPLICATION = 'openra_stats.wsgi.application'
+WSGI_APPLICATION = 'compo.wsgi.application'
 
 
 # Database
@@ -91,14 +91,14 @@ USE_TZ = True
 
 
 # registration provides templates for the registration app, and
-# openra_stats/templates (for base.html) isn't included by default.
+# compo/templates (for base.html) isn't included by default.
 TEMPLATE_DIRS = (
-    os.path.join(BASE_DIR, 'openra_stats/templates'),
+    os.path.join(BASE_DIR, 'compo/templates'),
     os.path.join(BASE_DIR, 'registration/templates'),
 )
 
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'openra_stats/static'),
+    os.path.join(BASE_DIR, 'compo/static'),
 )
 
 
