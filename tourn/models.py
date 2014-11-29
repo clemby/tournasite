@@ -112,7 +112,8 @@ class Team(models.Model):
 class TeamEntry(models.Model):
     """A team's entry into a tournament."""
     tournament = models.ForeignKey(Tournament, related_name='entries')
-    players = models.ManyToManyField(User, related_name='tournament_entries')
+    players = models.ManyToManyField(User, related_name='tournament_entries',
+                                     blank=True)
     team = models.ForeignKey(Team, related_name='entries')
 
     class Meta:

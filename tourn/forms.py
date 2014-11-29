@@ -1,4 +1,5 @@
 from django import forms
+from django.contrib.auth.models import User
 
 from .models import (
     Team,
@@ -47,6 +48,9 @@ class EntryFormBase(forms.ModelForm):
 
 
 class TeamEntryForm(EntryFormBase):
+    players = forms.ModelMultipleChoiceField(queryset=User.objects.all(),
+                                             required=False)
+
     class Meta:
         model = TeamEntry
         fields = ('team', 'tournament', 'players')
