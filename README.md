@@ -25,9 +25,9 @@ Then `syncdb` as usual:
     ./manage.py syncdb
 
 
-Front-end tools are managed using bower. To install, simply
+Front-end components are managed using bower. To install and build:
 
-    bower install
+    ./scripts/install-components.sh
 
 
 Now you should be ready to run the development server!
