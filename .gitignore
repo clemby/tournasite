@@ -9,6 +9,5 @@ local_settings.py
 *.orig
 *.egg-info
 /__pycache__
-/node_modules
-/bower_components
-
+/node_modules/
+/bower_components/
