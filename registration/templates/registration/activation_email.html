@@ -4,15 +4,15 @@
 <html lang="en">
 
 <head>
-    <title>{{ site.name }} {% trans "registration" %}</title>
+    <title>compo.openra.net {% trans "registration" %}</title>
 </head>
 
 <body>
 <p>
     {% blocktrans %}
     You (or someone pretending to be you) have asked to register an account at
-    {{ site.name }}.  If this wasn't you, please ignore this email
-    and your address will be removed from our records.
+    compo.openra.net. If this wasn't you, please ignore this email and your
+    address will be removed from our records.
     {% endblocktrans %}
 </p>
 <p>
@@ -23,15 +23,9 @@
 </p>
 
 <p>
-    <a href="http://{{site.domain}}{% url 'registration_activate' activation_key %}">
-        {{site.domain}}{% url 'registration_activate' activation_key %}
+    <a href="http://compo.openra.net{% url 'registration_activate' activation_key %}">
+        compo.openra.net{% url 'registration_activate' activation_key %}
     </a>
-</p>
-<p>
-    {% blocktrans %}
-    Sincerely,
-    {{ site.name }} Management
-    {% endblocktrans %}
 </p>
 </body>
 
