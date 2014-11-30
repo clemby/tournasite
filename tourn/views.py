@@ -21,6 +21,8 @@ from .forms import (
     PlayerEntryForm,
 )
 
+from .decorators import open_tournament_registration_required
+
 
 class MessageView(generic.TemplateView):
     template_name = 'tourn/message.html'
@@ -152,6 +154,7 @@ class PlayerSignup(generic.View, PlayerSignupMixin):
     error_template = 'tourn/message.html'
 
     @method_decorator(login_required)
+    @method_decorator(open_tournament_registration_required)
     def get(self, request, tournament_pk):
         tournament = get_object_or_404(Tournament, pk=tournament_pk)
         form = self.get_player_signup_form(
@@ -165,6 +168,7 @@ class PlayerSignup(generic.View, PlayerSignupMixin):
         })
 
     @method_decorator(login_required)
+    @method_decorator(open_tournament_registration_required)
     def post(self, request, tournament_pk):
         tournament = get_object_or_404(Tournament, pk=tournament_pk)
         form = PlayerEntryForm(request.POST)
@@ -207,6 +211,7 @@ class TeamSignup(generic.View, TeamSignupMixin):
     success_template_name = 'tourn/message.html'
 
     @method_decorator(login_required)
+    @method_decorator(open_tournament_registration_required)
     def get(self, request, tournament_pk):
         tournament = get_object_or_404(Tournament, pk=tournament_pk)
         form = self.get_team_signup_form_or_none(
@@ -220,6 +225,7 @@ class TeamSignup(generic.View, TeamSignupMixin):
         })
 
     @method_decorator(login_required)
+    @method_decorator(open_tournament_registration_required)
     def post(self, request, tournament_pk):
         tournament = get_object_or_404(Tournament, pk=tournament_pk)
         form = TeamEntryForm(request.POST)
@@ -242,11 +248,12 @@ class SignupMain(generic.View, TeamSignupMixin, PlayerSignupMixin):
     error_template_name = 'tourn/message.html'
 
     @method_decorator(login_required)
+    @method_decorator(open_tournament_registration_required)
     def get(self, request, tournament_pk):
         tournament = get_object_or_404(Tournament, pk=tournament_pk)
 
         already_entered = PlayerRandomTeamEntry.objects.filter(
-            player_pk=request.user.pk,
+            player__pk=request.user.pk,
             tournament=tournament
         ).exists() or TeamEntry.objects.filter(
             players__pk__contains=request.user.pk,
