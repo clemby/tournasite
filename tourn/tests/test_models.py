@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 
 import mock
+from django.test import TestCase
 from django.http import Http404
 
 from .. import models
@@ -143,6 +144,24 @@ class TournamentGetCurrentOr404TestCase(testutil.RequiresTournamentTestCase):
                 Http404,
                 models.Tournament.get_current_or_404
             )
+
+
+class TournamentHasStartedTestCase(TestCase):
+    def setUp(self):
+        self.tournament = models.Tournament(
+            name='tournament',
+            planned_start=datetime(2014, 1, 1)
+        )
+
+    @mock.patch('django.utils.timezone.now',
+                mock.Mock(side_effect=lambda: datetime(2014, 2, 1)))
+    def test_has_started_returns_true_if_planned_start_in_past(self):
+        self.assertTrue(self.tournament.has_started)
+
+    @mock.patch('django.utils.timezone.now',
+                mock.Mock(side_effect=lambda: datetime(2013, 1, 1)))
+    def test_has_started_returns_false_if_planned_start_not_in_past(self):
+        self.assertFalse(self.tournament.has_started)
 
 
 class TeamGetCurrentMembersTestCase(testutil.RequiresUsersTestCase,

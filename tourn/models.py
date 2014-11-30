@@ -67,7 +67,7 @@ class Tournament(models.Model):
 
     @property
     def has_started(self):
-        return self.planned_start >= timezone.now()
+        return self.planned_start <= timezone.now()
 
     def contains_player(self, player):
         return self.entries.filter(players__pk__contains=player.pk)
