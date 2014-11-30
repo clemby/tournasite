@@ -16,35 +16,31 @@ class TeamForm(forms.ModelForm):
 
 
 class EntryFormBase(forms.ModelForm):
-    def get_player_team_entry_errors(self, players, tournament):
-        entered_with_team = players.filter(
-            tournament_entries__tournament=tournament
+    def get_player_team_entry_error(self, players, tournament):
+        entries = tournament.entries.filter(players__in=players)
+
+        if not entries.exists():
+            return None
+
+        return 'Players have already entered: {}'.format(
+            list(entries.values_list('players__username'))
         )
 
-        if not entered_with_team.exists():
-            return []
+    def get_player_lone_entry_error(self, players, tournament):
+        entries = tournament.player_entries.filter(player__in=players)
 
-        return [
-            '{} has already entered with another team'.format(
-                player.username
-            )
-            for player in entered_with_team
-        ]
+        if not entries.exists():
+            return None
 
-    def get_player_lone_entry_errors(self, players, tournament):
-        entered_alone = players.filter(
-            tournament_random_team_entries__tournament=tournament
+        return 'Players have already signed up (without team): {}'.format(
+            list(entries.values_list('players__username'))
         )
 
-        if not entered_alone.exists():
-            return []
-
-        return [
-            '{} has already entered alone'.format(
-                player.username
-            )
-            for player in entered_alone
-        ]
+    def get_player_errors(self, players, tournament):
+        return filter(None, [
+            self.get_player_team_entry_error(players, tournament),
+            self.get_player_lone_entry_error(players, tournament),
+        ])
 
 
 class TeamEntryForm(EntryFormBase):
@@ -76,13 +72,8 @@ class TeamEntryForm(EntryFormBase):
             )
 
         if players:
-            player_errors = self.get_player_team_entry_errors(
-                players=players,
-                tournament=tournament
-            ) + self.get_player_lone_entry_errors(
-                players=players,
-                tournament=tournament
-            )
+            player_errors = self.get_player_errors(
+                players=players, tournament=tournament)
 
             if player_errors:
                 self.add_error('players', player_errors)
@@ -103,16 +94,13 @@ class PlayerEntryForm(EntryFormBase):
         tournament = cleaned_data.get('tournament')
 
         if player and tournament:
-            errors = self.get_player_lone_entry_errors(
-                players=(player,),
-                tournament=tournament
-            ) + self.get_player_team_entry_errors(
+            player_errors = self.get_player_errors(
                 players=(player,),
                 tournament=tournament
             )
 
-            if errors:
-                self.add_error('player', errors)
+            if player_errors:
+                self.add_error('player', player_errors)
 
         return self.cleaned_data
 
