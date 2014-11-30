@@ -2,7 +2,6 @@ from django.contrib.auth.models import User
 from django.db.models import Count
 
 from rest_framework import (
-    permissions,
     viewsets,
 )
 
@@ -20,11 +19,13 @@ from tourn.serializers import (
     TournamentSerializer,
 )
 
+from . import permissions
+
 
 class TeamViewSet(viewsets.ModelViewSet):
     queryset = Team.objects.all()
     serializer_class = TeamSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    permission_classes = (permissions.IsAdminOrReadOnly,)
     filter_fields = ('name', 'creator', 'admins', 'entries')
 
     def pre_save(self, obj):
@@ -34,7 +35,7 @@ class TeamViewSet(viewsets.ModelViewSet):
 class TeamEntryViewSet(viewsets.ModelViewSet):
     queryset = TeamEntry.objects.all()
     serializer_class = TeamEntrySerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    permission_classes = (permissions.IsAdminOrReadOnly,)
     filter_fields = ('team', 'tournament', 'players')
 
 
@@ -45,7 +46,7 @@ class PlayerViewSet(viewsets.ReadOnlyModelViewSet):
     ).filter(num_entries__gt=0)
 
     serializer_class = UserSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    permission_classes = (permissions.IsAdminOrReadOnly,)
     filter_fields = (
         'id',
         'username',
@@ -58,7 +59,7 @@ class PlayerViewSet(viewsets.ReadOnlyModelViewSet):
 class MatchViewSet(viewsets.ModelViewSet):
     queryset = Match.objects.all()
     serializer_class = MatchSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    permission_classes = (permissions.IsAdminOrReadOnly,)
     filter_fields = ('tournament', 'winner', 'teams', 'name')
     search_fields = ('name',)
 
@@ -66,7 +67,7 @@ class MatchViewSet(viewsets.ModelViewSet):
 class TournamentViewSet(viewsets.ModelViewSet):
     queryset = Tournament.objects.all()
     serializer_class = TournamentSerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    permission_classes = (permissions.IsAdminOrReadOnly,)
     filter_fields = (
         'name',
         'min_team_size',
