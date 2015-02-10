@@ -1,0 +1,14 @@
+{% extends 'events/base.html' %}
+{% load staticfiles %}
+
+
+{% block title %}{{event.name}}{% endblock %}
+
+{% block content %}
+<div id="event">
+  <h2>{{event.name}}</h2>
+  <span>Start: <span class="date">{{event.start}}</span></span>
+  <span>Finish: <span class="date">{{event.finish}}</span></span>
+  <p class="text">{{event.description}}</p>
+</div>
+{% endblock %}

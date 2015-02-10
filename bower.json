@@ -18,6 +18,7 @@
     "jquery": "1",
     "jquery-bracket": "https://github.com/teijo/jquery-bracket.git",
     "tournament-bracket-converter": "https://github.com/clemby/tournament-bracket-converter.git#~1.1.0",
-    "bootstrap": "~3.3.1"
+    "bootstrap": "~3.3.1",
+    "timeliner": "https://github.com/technotarek/timeliner.git"
   }
 }
