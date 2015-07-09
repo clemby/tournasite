@@ -5,6 +5,13 @@ from django.contrib.auth.models import User
 
 
 class Tournament(models.Model):
+    RENDER_JQBRACKET = 2
+    RENDER_BOOTSTRAP = 1
+    RENDERERS = (
+        (RENDER_JQBRACKET, 'jQuery Bracket'),
+        (RENDER_BOOTSTRAP, 'Bootstrap'),
+    )
+
     name = models.CharField(max_length=60, blank=True)
 
     min_team_size = models.SmallIntegerField(default=1)
@@ -15,6 +22,11 @@ class Tournament(models.Model):
 
     planned_start = models.DateTimeField()
     planned_finish = models.DateTimeField(null=True, blank=True)
+
+    render_method = models.SmallIntegerField(
+        choices=RENDERERS,
+        default=RENDER_JQBRACKET
+    )
 
     @classmethod
     def get_current(cls):
