@@ -12,6 +12,11 @@ class Tournament(models.Model):
         (RENDER_BOOTSTRAP, 'Bootstrap'),
     )
 
+    RENDERER_NAMES = {
+        RENDER_JQBRACKET: 'jqbracket',
+        RENDER_BOOTSTRAP: 'bootstrap',
+    }
+
     name = models.CharField(max_length=60, blank=True)
 
     min_team_size = models.SmallIntegerField(default=1)
@@ -83,6 +88,10 @@ class Tournament(models.Model):
 
     def contains_player(self, player):
         return self.entries.filter(players__pk__contains=player.pk)
+
+    @property
+    def renderer_name(self):
+        return self.RENDERER_NAMES[self.render_method]
 
 
 class Team(models.Model):

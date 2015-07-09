@@ -9,8 +9,7 @@
 
 {% block links %}
 <link rel="stylesheet" href="{% static 'tourn/css/base.css' %}" />
-<link rel="stylesheet"
-  href="{% static 'jquery-bracket/dist/jquery.bracket.min.css' %}" />
+<link rel="stylesheet" href="{% static 'jquery-bracket/dist/jquery.bracket.min.css' %}" />
 <style>.container { max-width: none !important; }</style>
 {% endblock %}
 
@@ -20,7 +19,7 @@
 browser. This page in particular requires JavaScript to run properly.
 Here are some
 <a href="http://www.enable-javascript.com/" target="_blank">
-  handy instructions
+	handy instructions
 </a>
 in case you need them. Enjoy!</p>
 {% endblock %}
@@ -32,65 +31,47 @@ in case you need them. Enjoy!</p>
 {% endif %}
 
 <div id="brackets-container">
-  <h2>Matches</h2>
-  <div id="brackets"></div>
+	<h2>Matches</h2>
+	<div id="brackets">
+	</div>
 </div>
 
 <div id="team-list-container">
-  <h2>Teams</h2>
-  <div id="team-list">
-    <ul>
-      {% for team in teams %}
-      <li>{{ team.name }}{% if team.short_name %} ({{ team.short_name }}){% endif %}</li>
-      {% endfor %}
-    </ul>
-  </div>
+	<h2>Teams</h2>
+	<div id="team-list">
+		<ul>
+			{% for team in teams %}
+			<li>{{ team.name }}{% if team.short_name %} ({{ team.short_name }}){% endif %}</li>
+			{% endfor %}
+		</ul>
+	</div>
 </div>
 
 {% if not tournament.has_started %}
 <div id="signup-container">
-  <h2>Sign up</h2>
-  <p class="text">This tournament hasn't started yet.
-  <a href="{% url 'tourn:tournament_signup_main' tournament.id %}" target="_blank">Signup?</a>
-  </p>
+	<h2>Sign up</h2>
+	<p class="text">This tournament hasn't started yet.
+	<a href="{% url 'tourn:tournament_signup_main' tournament.id %}" target="_blank">Signup?</a>
+	</p>
 </div>
 {% endif %}
 
 {% if tournament.winner %}
 <div id="winner-container">
-  <h2>Winner</h2>
-  <h3>{{ tournament.winner.name }}</h3>
+	<h2>Winner</h2>
+	<h3>{{ tournament.winner.name }}</h3>
 </div>
 {% endif %}
 {% endblock %}
 
 
 {% block scripts %}
-<script type="text/javascript"
-  src="{% static 'jquery-bracket/dist/jquery.bracket.min.js' %}">
-</script>
-
-<script type="text/javascript"
-  src="{% static 'tournament-bracket-converter/dist/tournament-bracket-converter.js' %}">
-</script>
-
+<script type="text/javascript" src="{% static 'jquery-bracket/dist/jquery.bracket.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'tournament-bracket-converter/dist/tournament-bracket-converter.js' %}"></script>
 <script type="text/javascript">
-  $(function() {
-    var data = {% autoescape off %}{{ as_json }}{% endautoescape %},
-        formatted = lib.formatTournamentData(data);
-
-    $('#brackets').bracket(formatted);
-
-    var outer = $('#brackets'),
-        inner = outer.find('.bracket, .finals, .loserBracket'),
-        heights = $.map(inner, function(i) { return $(i).height(); }),
-        widths = $.map(inner, function(i) { return $(i).width(); });
-
-    outer.height(Math.max.apply(Math, heights));
-    outer.width(Math.max.apply(Math, widths));
-  });
+	lib.renderers.{{ tournament.renderer_name }}('#brackets', {% autoescape off %}{{ as_json }}{% endautoescape %});
 </script>
 {% endblock %}
 
-  </body>
+</body>
 </html>
