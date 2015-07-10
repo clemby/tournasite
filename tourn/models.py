@@ -71,7 +71,7 @@ class Tournament(models.Model):
 
     @property
     def is_ffa(self):
-        return self.max_team_size == 1
+        return self.max_teams_per_match > 2
 
     @property
     def enrolled_team_names(self):
@@ -92,6 +92,26 @@ class Tournament(models.Model):
     @property
     def renderer_name(self):
         return self.RENDERER_NAMES[self.render_method]
+
+    def description(self):
+        items = []
+        if self.max_team_size == 1:
+            items.append(
+                '1v1' if self.max_teams_per_match == 2 else 'single player'
+            )
+        elif self.max_team_size == self.min_team_size:
+            items.append('teams of {}'.format(self.max_team_size))
+        else:
+            items.append('teams of variable size')
+
+        if self.is_ffa:
+            items.append('free-for-all')
+        elif self.max_teams_per_match == self.min_teams_per_match:
+            items.append(
+                '{} teams per match'.format(self.max_teams_per_match)
+            )
+
+        return 'Tournament ({})'.format(', '.join(items))
 
 
 class Team(models.Model):

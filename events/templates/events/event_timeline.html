@@ -20,16 +20,28 @@
 				<div id="timeline" class="timeline-container">
 					<div class="timeline-wrapper">
 						{% for event in event_list %}
-						<h3 class="timeline-time">
-							{{event.start|date:'Y/m/d'}} - {{event.finish|date:'Y/m/d'}}</h3>
+						<p class="timeline-time">{{event.start|date:'Y/m/d'}} - {{event.finish|date:'Y/m/d'}}</p>
 						<dl class="timeline-series">
-							<dt ckass="timeline-event" id="event-{{event.pk}}">
+							<dt class="timeline-event" id="event-{{event.pk}}">
 							<a>{{event.name}}</a>
 							</dt>
 							<dd class="timeline-event-content" id="event-{{event.pk}}EX">
 							<p>{{event.description}}</p>
 						</dl>
 						{% endfor %}
+
+						{% for t in tournament_list %}
+						<h3
+							class="timeline-time">{{t.planned_start|date:'Y/m/d'}} - {{t.planned_finish|date:'Y/m/d'}}</h3>
+						<dl class="timeline-series">
+							<dt class="timeline-event" id="tournament-{{t.pk}}">
+							<a>{{t.name}}</a>
+							</dt>
+							<dd class="timeline-event-content" id="tournament-{{t.pk}}EX">
+							<p>{{t.description}}</p>
+						</dl>
+						{% endfor %}
+
 					</div>
 				</div>
 			</div>
@@ -47,6 +59,7 @@
 <script type="text/javascript">
 $(document).ready(function(){
 	$.timeliner({
+		startState: 'open'
 	});
 });
 </script>
