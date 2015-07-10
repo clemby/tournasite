@@ -7,27 +7,18 @@
 
 			<h1>{% if tournament.name %}Signup: {{ tournament.name }}{% else %}Tournament signup{% endif %}</h1>
 
-			<div class="col-md-6">
+			<div class="col-md-12">
 				{% if forms.enter_team %}
 				{% include 'tourn/team_signup_fragment.html' with form=forms.enter_team %}
 				{% else %}
-				<h3>Enter a team</h3>
-				<p class="text">A team can only be entered by its admins.</p>
+				<h3>Enter an existing team</h3>
+				<p class="text">Only team admins can enter their teams into
+				tournaments. Either ask a team admin to enter you or
+				<a href="{% url 'tourn:create_team' %}">create a new team</a>.</p>
 				{% endif %}
 			</div>
 
-			<div class="col-md-6">
-				<h3>Enter with a random team</h3>
-				<form method="post" action="{% url 'tourn:tournament_signup_player' tournament.id %}">
-					{% csrf_token %}
-					<ul class="list-unstyled">
-						{{ forms.enter_player.as_ul }}
-					</ul>
-					<button type="submit" value="Submit">Sign up!</button>
-				</form>
-			</div>
 		</div>
 	</div>
 </section>
-
 {% endblock %}
