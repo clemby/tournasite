@@ -1,22 +1,30 @@
 {% extends 'tourn/base.html' %}
 
 {% block content %}
-<dl class="list-unstyled">
-  {% for team in team_list %}
-  <li>
-    <div>
-      <a class="h3" href="{% url 'tourn:team_detail' team.pk %}">
-        {{ team.name }}
-      </a>
-      <div class="h4">Current members:</div>
-      <ul class="list-inline">
-        {% for member_name in team.current_member_names %}
-        <li>{{ member_name }}</li>
-        {% endfor %}
-      </ul>
-    </div>
-  </li>
-  <hr>
-  {% endfor %}
-</dl>
+<section id="team-list" class="last-section">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<dl class="list-unstyled">
+					{% for team in team_list %}
+					<li>
+					<div>
+						<a class="h3" href="{% url 'tourn:team_detail' team.pk %}">
+							{{ team.name }}
+						</a>
+						<div class="h4">Current members:</div>
+						<ul class="list-inline">
+							{% for member_name in team.current_member_names %}
+							<li>{{ member_name }}</li>
+							{% endfor %}
+						</ul>
+					</div>
+					</li>
+					<hr>
+					{% endfor %}
+				</dl>
+			</div>
+		</div>
+	</div>
+</section>
 {% endblock %}

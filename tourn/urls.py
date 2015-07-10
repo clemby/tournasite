@@ -11,7 +11,7 @@ urlpatterns = patterns(
     url(r'^error/$', views.MessageView.as_view(), name='error'),
 
     url(r'^teams/$', views.TeamList.as_view(), name='team_list'),
-    url(r'^teams/(?P<team_pk>\d+)/$',
+    url(r'^teams/(?P<pk>\d+)/$',
         views.TeamDetail.as_view(),
         name='team_detail'),
     url(r'^teams/create/$', views.TeamCreate.as_view(), name='team_create'),
