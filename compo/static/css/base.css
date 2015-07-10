@@ -59,7 +59,7 @@ form li label[for] {
 .nav>li>a {
   padding-top:15px;
 }
-.nav>li.dropdown.btn>a {
+.nav>li>a.log-in-out {
   padding-top: 8px !important;
 }
 

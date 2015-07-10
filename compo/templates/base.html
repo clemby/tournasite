@@ -66,7 +66,7 @@
 					{% if user.is_authenticated %}
 					<ul class="nav pull-right">
 						<li class="dropdown btn">
-						<a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ user.username }}<b class="caret"></b>
+						<a href="#" class="log-in-out dropdown-toggle" data-toggle="dropdown">{{ user.username }}<b class="caret"></b>
 						</a>
 						<ul class="dropdown-menu">
 							<li><a href="{% url 'auth_logout' %}">Log out</a></li>
@@ -75,7 +75,7 @@
 					</ul>
 					{% else %}
 					<ul class="btn nav pull-right">
-						<li><a href="{% url 'auth_login' %}">Log in</a></li>
+						<li><a class="log-in-out" href="{% url 'auth_login' %}">Log in</a></li>
 					</ul>
 					{% endif %}
 				</li>
@@ -99,7 +99,7 @@
 			<div class="col-md-12 col-lg-12 text-center">
 				<p>&copy;Copyright 2015 - OpenRA developers. All rights reserved.</p>
 			</div>
-		</div>	
+		</div>
 	</div>
 </footer>
 {% endblock %}
