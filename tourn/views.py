@@ -256,7 +256,7 @@ class SignupMain(generic.View, TeamSignupMixin, PlayerSignupMixin):
             player__pk=request.user.pk,
             tournament=tournament
         ).exists() or TeamEntry.objects.filter(
-            players__pk__contains=request.user.pk,
+            players__pk=request.user.pk,
             tournament=tournament
         ).exists()
 
