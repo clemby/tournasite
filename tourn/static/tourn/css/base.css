@@ -24,11 +24,39 @@ div.jQBracket .team {
 	border: 1px solid red;
 }
 
-.team {
-	background-color: red;
-}
-
 .match {
 	min-height: 60px;
 	text-align: center;
+}
+
+
+.team {
+	z-index: 1;
+	background-color: #EEE;
+	border-top: 1px solid #999;
+}
+.team.loser {
+	text-decoration: line-through;
+	color: red;
+}
+.team.winner {
+	font-weight: bolder;
+}
+table.match:first-child {
+	border-top: none;
+}
+
+table.match {
+	width: 100%;
+}
+
+table.match>caption {
+	text-align: center !important;
+	font-size: 18px;
+	color: #eee;
+}
+
+tr.team>th {
+	text-align: center !important;
+	color: black;
 }
