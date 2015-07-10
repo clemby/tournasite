@@ -53,24 +53,28 @@ href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css"{% endif %
 </section>
 
 
-<section id="commencement">
+<section id="commencement" style="margin-bottom: 100px;">
 	<div class="container">
 		<div class="row">
-			{% if not tournament.has_started %}
-			<div id="signup-container">
+			<div class="col-md-12">
+				{% if not tournament.has_started %}
 				<h2>Sign up</h2>
-				<p class="text">This tournament hasn't started yet.
-				<a href="{% url 'tourn:tournament_signup_main' tournament.id %}" target="_blank">Signup?</a>
-				</p>
+				<div id="signup-container">
+					<p class="text">This tournament hasn't started yet.
+					<a href="{% url 'tourn:tournament_signup_main' tournament.id %}" target="_blank">Sign up?</a>
+					</p>
+				</div>
+				{% endif %}
 			</div>
-			{% endif %}
 
-			{% if tournament.winner %}
-			<div id="winner-container">
-				<h2>Winner</h2>
-				<h3>{{ tournament.winner.name }}</h3>
+			<div class="col-md-12">
+				{% if tournament.winner %}
+				<div id="winner-container">
+					<h2>Winner</h2>
+					<h3>{{ tournament.winner.name }}</h3>
+				</div>
+				{% endif %}
 			</div>
-			{% endif %}
 		</div>
 	</div>
 </section>
