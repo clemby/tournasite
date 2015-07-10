@@ -3,11 +3,14 @@
 
 {% block title %}{% trans "Register for an account" %}{% endblock %}
 
-{% block content %}
-<form method="post" action="">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="{% trans 'Submit' %}" />
+{% block registration_content %}
+<style>form.form>ul>li>label { min-width: 150px; }</style>
+<form method="post" action="" class="form">
+	<ul class="list-unstyled">
+		{% csrf_token %}
+		{{ form.as_ul }}
+		<input type="submit" value="{% trans 'Submit' %}" />
+	</ul>
 </form>
 {% endblock %}
 
