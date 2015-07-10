@@ -70,6 +70,10 @@ form li label[for] {
   background-color: #222;
 }
 
+.last-section {
+  margin-bottom: 100px;
+}
+
 /* Customize container */
 @media (min-width: 768px) {
   .container {
