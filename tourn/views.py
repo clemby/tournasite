@@ -120,7 +120,9 @@ class TeamCreate(generic.View):
 
     @method_decorator(login_required)
     def get(self, request):
-        form = TeamForm()
+        form = TeamForm({
+            'admins': (request.user.pk,),
+        })
         return render(request, self.template_name, {
             'form': form,
         })
@@ -131,6 +133,10 @@ class TeamCreate(generic.View):
         if form.is_valid():
             form.instance.creator = request.user
             form.save(commit=True)
+        else:
+            return render(request, self.template_name, {
+                'form': form,
+            })
 
         return redirect(reverse('tourn:team_list'))
 
@@ -189,9 +195,7 @@ class PlayerSignup(generic.View, PlayerSignupMixin):
 
 class TeamSignupMixin(object):
     def get_team_signup_form_or_none(self, player_pk, tournament_pk):
-        administered_teams = Team.objects.filter(
-            admins__pk__contains=player_pk
-        )
+        administered_teams = Team.objects.filter(admins__pk=player_pk)
 
         if not administered_teams.exists():
             return None
