@@ -1,0 +1,7 @@
+<h3>Create team</h3>
+<form id="team_form" method="post" action="{{ action }}">{% csrf_token %}
+	<ul class="list-unstyled">
+		{{ form.as_ul }}
+	</ul>
+	<input type="submit" name="submit" value="Create">
+</form>
