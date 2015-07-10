@@ -1,4 +1,5 @@
-{% extends 'tourn/base.html' %}
+{% extends 'base.html' %}
+
 {% load staticfiles %}
 
 
@@ -8,70 +9,90 @@
 
 
 {% block links %}
+<link rel="stylesheet" {% if debug %}
+href="{% static 'bootstrap/dist/css/bootstrap.css' %}"{% else %}
+href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css"{% endif %} />
+
+<link rel="stylesheet" href="{% static 'jquery-bracket/dist/jquery.bracket.min.css' %}" />
+<link rel="stylesheet" href="{% static 'css/base.css' %}" />
 <link rel="stylesheet" href="{% static 'tourn/css/base.css' %}" />
 <link rel="stylesheet" href="{% static 'jquery-bracket/dist/jquery.bracket.min.css' %}" />
-<style>.container { max-width: none !important; }</style>
-{% endblock %}
-
-
-{% block noscript %}
-<p class="noscript">Uh oh! It looks like JavaScript isn't enabled in your
-browser. This page in particular requires JavaScript to run properly.
-Here are some
-<a href="http://www.enable-javascript.com/" target="_blank">
-	handy instructions
-</a>
-in case you need them. Enjoy!</p>
 {% endblock %}
 
 
 {% block content %}
-{% if tournament.name %}
-<h1>{{ tournament.name }}</h1>
-{% endif %}
-
-<div id="brackets-container">
-	<h2>Matches</h2>
-	<div id="brackets">
+<section id="tournament-summary">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<h2>{{ tournament.name }}</h2>
+				<div id="brackets-container" class="container">
+					<div id="brackets">
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
-</div>
+</section>
 
-<div id="team-list-container">
-	<h2>Teams</h2>
-	<div id="team-list">
-		<ul>
-			{% for team in teams %}
-			<li>{{ team.name }}{% if team.short_name %} ({{ team.short_name }}){% endif %}</li>
-			{% endfor %}
-		</ul>
+<section id="team-list">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<h2>Teams</h2>
+				<div id="team-list">
+					<ul>
+						{% for team in teams %}
+						<li>{{ team.name }}{% if team.short_name %} ({{ team.short_name }}){% endif %}</li>
+						{% endfor %}
+					</ul>
+				</div>
+			</div>
+		</div>
 	</div>
-</div>
+</section>
 
-{% if not tournament.has_started %}
-<div id="signup-container">
-	<h2>Sign up</h2>
-	<p class="text">This tournament hasn't started yet.
-	<a href="{% url 'tourn:tournament_signup_main' tournament.id %}" target="_blank">Signup?</a>
-	</p>
-</div>
-{% endif %}
 
-{% if tournament.winner %}
-<div id="winner-container">
-	<h2>Winner</h2>
-	<h3>{{ tournament.winner.name }}</h3>
-</div>
-{% endif %}
+<section id="commencement">
+	<div class="container">
+		<div class="row">
+			{% if not tournament.has_started %}
+			<div id="signup-container">
+				<h2>Sign up</h2>
+				<p class="text">This tournament hasn't started yet.
+				<a href="{% url 'tourn:tournament_signup_main' tournament.id %}" target="_blank">Signup?</a>
+				</p>
+			</div>
+			{% endif %}
+
+			{% if tournament.winner %}
+			<div id="winner-container">
+				<h2>Winner</h2>
+				<h3>{{ tournament.winner.name }}</h3>
+			</div>
+			{% endif %}
+		</div>
+	</div>
+</section>
 {% endblock %}
 
 
 {% block scripts %}
+<script type="text/javascript" {% if debug %}
+	src="{% static 'jquery/dist/jquery.js' %}"{% else %}
+	src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"{% endif %}>
+</script>
+<script type="text/javascript" {% if debug %}
+	src="{% static 'bootstrap/dist/js/bootstrap.min.js' %}" {% else %}
+	src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"{% endif %}>
+</script>
 <script type="text/javascript" src="{% static 'jquery-bracket/dist/jquery.bracket.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'tournament-bracket-converter/dist/tournament-bracket-converter.js' %}"></script>
 <script type="text/javascript">
 	lib.renderers.{{ tournament.renderer_name }}('#brackets', {% autoescape off %}{{ as_json }}{% endautoescape %});
 </script>
 {% endblock %}
+
 
 </body>
 </html>

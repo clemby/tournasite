@@ -1,108 +1,123 @@
 {% load staticfiles %}
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title>{% block title %}OpenRA Competitions{% endblock %}</title>
 
-    {% comment %}
-    Override this to pick a different version/custom build.
-    {% endcomment %}{% block bootstrap_link %}
-    <link rel="stylesheet" {% if debug %}
-      href="{% static 'bootstrap/dist/css/bootstrap.css' %}"{% else %}
-      href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css"{% endif %} />
-    {% endblock %}
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="OpenRA tournaments and competitions">
+<meta name="author" content="OpenRA developers">
 
-    {% block base_theme %}
-    <link rel="stylesheet" href="{% static 'css/base.css' %}" />
-    {% endblock %}
+<title>{% block title %}OpenRA Competitions{% endblock %}</title>
 
-    {% block links %}
-    {% endblock %}
-  </head>
+{% block links %}
+<link rel="stylesheet" {% if debug %}href="{% static 'bootstrap/dist/css/bootstrap.css' %}"{% else %}href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css"{% endif %} />
+<link rel="stylesheet" href="{% static 'css/base.css' %}" />
+{% endblock %}
 
-  <body role="document">
-    <style>body { background-image: url("{% static 'img/bg.svg' %}"); }</style>
-    <noscript>
-      {% block noscript %}
-      <p class="noscript">Uh oh! It looks like JavaScript isn't enabled in your
-      browser. Some parts of this site won't work properly unless you enable
-      it. Here are some
-      <a href="http://www.enable-javascript.com/" target="_blank">
-        handy instructions
-      </a>
-      in case you need them. Enjoy!</p>
-      {% endblock %}
-    </noscript>
+<style>
+.background {
+	background-image: url("{% static 'img/bg.svg' %}");
+}
 
-    {% block navbar %}
-    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-      <div>
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="/">OpenRA Competitions</a>
-        </div>
-        <div id="navbar" class="navbar-collapse collapse">
-          <ul class="nav navbar-nav">
-            <li><a href="/">Home</a></li>
-            <li><a href="{% url 'tourn:tournament_list' %}">Tournaments</a></li>
-            <li><a href="{% url 'api-root' %}">API</a></li>
-          </ul>
+@media (max-width: 480px) {
+	.background {
+		background-position-x: 6%;
+		background-size: cover;
+	}
+}
+</style>
+</head>
 
-          {% if user.is_authenticated %}
-          <ul class="nav pull-right">
-            <li class="dropdown btn">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                {{ user.username }}
-                <b class="caret"></b>
-              </a>
-              <ul class="dropdown-menu">
-                <li><a href="{% url 'auth_logout' %}">Log out</a></li>
-              </ul>
-            </li>
-          </ul>
-          {% else %}
-          <ul class="btn nav pull-right">
-            <li><a href="{% url 'auth_login' %}">Log in</a></li>
-          </ul>
-          {% endif %}
 
-        </div><!--/.nav-collapse -->
+<body id="page-top" class="background" data-spy="scroll" data-target=".navbar-inverse">
 
-      </div>
-    </nav>
-    {% endblock %}
+{% block noscript %}
+<noscript>
+	<p class="noscript">Uh oh! It looks like JavaScript isn't enabled in your
+	browser. This page in particular requires JavaScript to run properly.
+	Here are some
+	<a href="http://www.enable-javascript.com/" target="_blank">
+		handy instructions
+	</a>
+	in case you need them. Enjoy!</p>
+</noscript>
+{% endblock %}
 
-    <div class="container content-container">
-      {% block content %}
-      {% endblock %}
-    </div>
+{% block navbar %}
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+	<div class="container">
+		<div class="navbar-header page-scroll">
+			<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-main-collapse" aria-expanded="false" aria-controls="navbar">
+				<span class="sr-only">Toggle navigation</span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+				<span class="icon-bar"></span>
+			</button>
+			<a class="navbar-brand" href="/">OpenRA Competitions</a>
+		</div>
 
-    {% comment %}
-    Allow pages to override the version of jQuery if they need to. Version
-    1.11.1 is default because it works with the crusty old browsers too.
-    {% endcomment %}{% block jquery %}
-    <script type="text/javascript" {% if debug %}
-      src="{% static 'jquery/dist/jquery.js' %}"{% else %}
-      src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"{% endif %}>
-    </script>
-    {% endblock %}
+		<div class="collapse navbar-collapse navbar-right navbar-main-collapse">
+			<ul class="nav navbar-nav">
+				<li><a href="/">Home</a></li>
+				<li><a class="active" href="{% url 'tourn:tournament_list' %}">Tournaments</a></li>
+				<li><a href="{% url 'api-root' %}">API</a></li>
+				<li>
+					{% if user.is_authenticated %}
+					<ul class="nav pull-right">
+						<li class="dropdown btn">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ user.username }}<b class="caret"></b>
+						</a>
+						<ul class="dropdown-menu">
+							<li><a href="{% url 'auth_logout' %}">Log out</a></li>
+						</ul>
+						</li>
+					</ul>
+					{% else %}
+					<ul class="btn nav pull-right">
+						<li><a href="{% url 'auth_login' %}">Log in</a></li>
+					</ul>
+					{% endif %}
+				</li>
+			</ul>
+		</div>
+	</div>
+</nav>
+{% endblock %}
 
-    {% comment %}Allow bootstrap version to be overridden too.
-    {% endcomment %}{% block bootstrap_script %}
-    <script type="text/javascript" {% if debug %}
-      src="{% static 'bootstrap/dist/js/bootstrap.min.js' %}" {% else %}
-      src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"{% endif %}>
-    </script>
 
-    <script type="text/javascript" src="{% static 'js/page-utils.js' %}"></script>
-    {% endblock %}
 
-    {% block scripts %}
-    {% endblock %}
-  </body>
+{% block content %}
+{% endblock %}
+
+
+
+{% block footer %}
+<footer class="footer nav navbar-fixed-bottom">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12 col-lg-12 text-center">
+				<p>&copy;Copyright 2015 - OpenRA developers. All rights reserved.</p>
+			</div>
+		</div>	
+	</div>
+</footer>
+{% endblock %}
+
+
+
+{% block scripts %}
+<script type="text/javascript" {% if debug %}
+	src="{% static 'jquery/dist/jquery.js' %}"{% else %}
+	src="//cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"{% endif %}>
+</script>
+<script type="text/javascript" {% if debug %}
+	src="{% static 'bootstrap/dist/js/bootstrap.min.js' %}" {% else %}
+	src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"{% endif %}>
+</script>
+{% endblock %}
+
+
+</body>
+
 </html>

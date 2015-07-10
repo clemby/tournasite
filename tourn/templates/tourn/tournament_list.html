@@ -1,20 +1,27 @@
 {% extends 'tourn/base.html' %}
 
 {% block content %}
-<h1>Tournaments</h1>
-
-<ul class="list-unstyled">
-  {% for tournament in tournament_list %}
-  <li>
-    <div>
-      <a class="h3" href="{% url 'tourn:tournament_detail' tournament.pk %}">
-        {{ tournament.name }}
-      </a>
-      <ul class="list-unstyled">
-        <li><span>Start: {{ tournament.planned_start|date:"c" }}</span></li>
-        <li><span>End: {{ tournament.planned_finish|date:"c" }}</span></li>
-      </ul>
-  </li>
-  {% endfor %}
-</ul>
+<section id="tournament-list">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<h1>Tournaments</h1>
+				<ul class="list-unstyled">
+				{% for tournament in tournament_list %}
+				<li>
+					<div>
+					<a class="h3" href="{% url 'tourn:tournament_detail' tournament.pk %}">
+						{{ tournament.name }}
+					</a>
+					<ul class="list-unstyled">
+						<li><span>Start: {{ tournament.planned_start|date:"c" }}</span></li>
+						<li><span>End: {{ tournament.planned_finish|date:"c" }}</span></li>
+					</ul>
+				</li>
+				{% endfor %}
+				</ul>
+			</div>
+		</div>
+	</div>
+</section>
 {% endblock %}
