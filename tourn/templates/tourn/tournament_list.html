@@ -1,12 +1,17 @@
 {% extends 'tourn/base.html' %}
 
 {% block content %}
+<style>
+body { text-align: center; }
+#tournament-list ul.tournament-list>li { padding-top: 15px; }
+#tournament-list ul.tournament-list>li li { padding-top: 5px; }
+</style>
 <section id="tournament-list" class="last-section">
 	<div class="container">
 		<div class="row">
 			<div class="col-md-12">
 				<h1>Tournaments</h1>
-				<ul class="list-unstyled">
+				<ul class="list-unstyled tournament-list">
 				{% for tournament in tournament_list %}
 				<li>
 					<div>
