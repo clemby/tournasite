@@ -3,30 +3,77 @@
 {% block content %}
 <style>
 body { text-align: center; }
-#tournament-list ul.tournament-list>li { padding-top: 15px; }
-#tournament-list ul.tournament-list>li li { padding-top: 5px; }
+.tournament-list { margin: 20px 0 60px 0; }
+ul.tournament-list>li { padding-top: 15px; }
+ul.tournament-list>li li { padding-top: 5px; }
+.tournament-list>li a { text-decoration: underline; }
 </style>
 <section id="tournament-list" class="last-section">
 	<div class="container">
+
+		{% if active_tournaments %}
 		<div class="row">
 			<div class="col-md-12">
-				<h1>Tournaments</h1>
+				<h1>Active tournaments</h1>
 				<ul class="list-unstyled tournament-list">
-				{% for tournament in tournament_list %}
-				<li>
-					<div>
-					<a class="h3" href="{% url 'tourn:tournament_detail' tournament.pk %}">
-						{{ tournament.name }}
-					</a>
-					<ul class="list-unstyled">
-						<li><span>Start: {{ tournament.planned_start|date:"c" }}</span></li>
-						<li><span>End: {{ tournament.planned_finish|date:"c" }}</span></li>
-					</ul>
-				</li>
-				{% endfor %}
+					{% for tournament in active_tournaments %}
+					<li>
+						<div>
+							<a class="h2" href="{% url 'tourn:tournament_detail' tournament.pk %}">{{ tournament.name }}</a>
+						</div>
+						<ul class="list-unstyled">
+							<li class="dates">({{ tournament.planned_start|date:"d/m/Y" }} - {{ tournament.planned_finish|date:"d/m/Y" }})</li>
+							<li class="description">{{ tournament.description|capfirst }}</li>
+						</ul>
+					</li>
+					{% endfor %}
 				</ul>
 			</div>
 		</div>
+		{% endif %}
+
+		{% if future_tournaments %}
+		<div class="row">
+			<div class="col-md-12">
+				<h1>Coming soon</h1>
+				<ul class="list-unstyled tournament-list">
+					{% for tournament in future_tournaments %}
+					<li>
+						<div>
+							<a class="h2" href="{% url 'tourn:tournament_detail' tournament.pk %}">{{ tournament.name }}</a>
+						</div>
+						<ul class="list-unstyled">
+							<li class="dates">({{ tournament.planned_start|date:"d/m/Y" }} - {{ tournament.planned_finish|date:"d/m/Y" }})</li>
+							<li class="description">{{ tournament.description|capfirst }}</li>
+						</ul>
+					</li>
+					{% endfor %}
+				</ul>
+			</div>
+		</div>
+		{% endif %}
+
+		{% if past_tournaments %}
+		<div class="row">
+			<div class="col-md-12">
+				<h1>Past tournaments</h1>
+				<ul class="list-unstyled tournament-list">
+					{% for tournament in past_tournaments %}
+					<li>
+						<div>
+							<a class="h2" href="{% url 'tourn:tournament_detail' tournament.pk %}">{{ tournament.name }}</a>
+						</div>
+						<ul class="list-unstyled">
+							<li class="dates">({{ tournament.planned_start|date:"d/m/Y" }} - {{ tournament.planned_finish|date:"d/m/Y" }})</li>
+							<li class="description">{{ tournament.description|capfirst }}</li>
+						</ul>
+					</li>
+					{% endfor %}
+				</ul>
+			</div>
+		</div>
+		{% endif %}
+
 	</div>
 </section>
 {% endblock %}

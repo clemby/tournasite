@@ -86,6 +86,10 @@ class Tournament(models.Model):
     def has_started(self):
         return self.planned_start <= timezone.now()
 
+    @property
+    def has_finished(self):
+        return self.planned_finish <= timezone.now()
+
     def contains_player(self, player):
         return self.entries.filter(players__pk__contains=player.pk)
 
@@ -111,7 +115,7 @@ class Tournament(models.Model):
                 '{} teams per match'.format(self.max_teams_per_match)
             )
 
-        return 'Tournament ({})'.format(', '.join(items))
+        return ', '.join(items)
 
 
 class Team(models.Model):

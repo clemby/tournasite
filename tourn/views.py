@@ -1,5 +1,6 @@
 import json
 
+from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 from django.views import generic
@@ -101,6 +102,23 @@ class TournamentList(generic.ListView):
     model = Tournament
     template_name = 'tourn/tournament_list.html'
     context_object_name = 'tournament_list'
+
+    def get(self, request):
+        tournaments = Tournament.objects.all()
+        now = timezone.now()
+
+        active_tournaments = tournaments.filter(
+            planned_start__lte=now,
+            planned_finish__gte=now,
+        )
+        future_tournaments = tournaments.filter(planned_start__gt=now)
+        past_tournaments = tournaments.filter(planned_finish__lt=now)
+
+        return render(request, self.template_name, {
+            'active_tournaments': active_tournaments,
+            'future_tournaments': future_tournaments,
+            'past_tournaments': past_tournaments,
+        })
 
 
 class TeamDetail(generic.DetailView):
