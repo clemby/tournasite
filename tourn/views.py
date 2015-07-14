@@ -240,6 +240,7 @@ class TeamSignup(generic.View, TeamSignupMixin):
                 'tournament': tournament,
             })
 
+        form.save(commit=True)
         return render(request, self.success_template_name, {
             'message': 'Team successfully registered!',
             'title': 'Registration successful',
