@@ -1,0 +1,16 @@
+{% extends 'tourn/base.html' %}
+
+{% block content %}
+<section id="team-detail" class="last-section">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12">
+				<form action="" method="post">{% csrf_token %}
+					{{ form.as_p }}
+					<input type="submit" value="Update" />
+				</form>
+			</div>
+		</div>
+	</div>
+</section>
+{% endblock %}

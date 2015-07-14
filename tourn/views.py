@@ -133,6 +133,25 @@ class TeamList(generic.ListView):
     context_object_name = 'team_list'
 
 
+class TeamUpdate(generic.edit.UpdateView):
+    model = Team
+    fields = ('name', 'admins',)
+    template_name_suffix = '_update'
+
+
+class UserAdministeredTeamList(generic.ListView):
+    model = Team
+    template_name = 'tourn/team_list.html'
+    context_object_name = 'team_list'
+
+    @method_decorator(login_required)
+    def get(self, request):
+        queryset = request.user.administered_teams
+        return render(request, self.template_name, {
+            self.context_object_name: list(queryset.all()),
+        })
+
+
 class TeamCreate(generic.View):
     template_name = 'tourn/team_create.html'
 

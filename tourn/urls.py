@@ -14,7 +14,13 @@ urlpatterns = patterns(
     url(r'^teams/(?P<pk>\d+)/$',
         views.TeamDetail.as_view(),
         name='team_detail'),
+    url(r'^teams/update/(?P<pk>\d+)/$',
+        views.TeamUpdate.as_view(),
+        name='team_update'),
     url(r'^teams/create/$', views.TeamCreate.as_view(), name='team_create'),
+    url(r'^teams/mine/$',
+        views.UserAdministeredTeamList.as_view(),
+        name='user_administered_teams'),
 
     url(r'^tournaments/$',
         views.TournamentList.as_view(),

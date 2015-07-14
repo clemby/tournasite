@@ -24,10 +24,20 @@
 							<li>{{ admin_name }}</li>
 							{% endfor %}
 						</ul>
+						{% if user.is_authenticated and user in team.admins.all %}
+						<a href="{% url 'tourn:team_update' team.pk %}">Edit</a>
+						{% endif %}
 					</div>
 					</li>
 					<hr>
 					{% endfor %}
+
+					{% if user.is_authenticated %}
+					<div>
+						<a href="{% url 'tourn:team_create' %}">Create</a>
+					</div>
+					{% endif %}
+
 				</dl>
 			</div>
 		</div>
