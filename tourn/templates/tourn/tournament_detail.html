@@ -60,7 +60,7 @@ href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css"{% endif %
 	<div class="container">
 		<div class="row">
 			<div class="col-md-12">
-				{% if not tournament.has_started %}
+				{% if allow_signup %}
 				<h2>Sign up</h2>
 				<div id="signup-container">
 					<p class="text">This tournament hasn't started yet.

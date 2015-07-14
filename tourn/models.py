@@ -91,7 +91,7 @@ class Tournament(models.Model):
         return self.planned_finish <= timezone.now()
 
     def contains_player(self, player):
-        return self.entries.filter(players__pk__contains=player.pk)
+        return self.entries.filter(players__pk=player.pk).exists()
 
     @property
     def renderer_name(self):

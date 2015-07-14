@@ -77,8 +77,10 @@ class TournamentDetail(generic.View):
             'teams': teams_list,
         }
 
-        allow_signup = request.user.is_authenticated() and not \
-            tournament.contains_player(request.user)
+        user = request.user
+        allow_signup = user.is_authenticated() and \
+            not tournament.contains_player(user) and \
+            not tournament.has_started
 
         return render(request, self.template_name, {
             'tournament': tournament,
