@@ -12,10 +12,16 @@
 						<a class="h3" href="{% url 'tourn:team_detail' team.pk %}">
 							{{ team.name }}
 						</a>
-						<div class="h4">Current members:</div>
+						<div class="h4">Most recent members:</div>
 						<ul class="list-inline">
 							{% for member_name in team.current_member_names %}
 							<li>{{ member_name }}</li>
+							{% endfor %}
+						</ul>
+						<div class="h4">Admins:</div>
+						<ul class="list-inline">
+							{% for admin_name in team.admin_names %}
+							<li>{{ admin_name }}</li>
 							{% endfor %}
 						</ul>
 					</div>

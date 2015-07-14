@@ -149,6 +149,11 @@ class Team(models.Model):
     def has_entered(self, tournament):
         return self.entries.filter(tournament=tournament).exists()
 
+    @property
+    def admin_names(self):
+        values_list = self.admins.values_list('username')
+        return [tup[0] for tup in values_list]
+
 
 class TeamEntry(models.Model):
     """A team's entry into a tournament."""
