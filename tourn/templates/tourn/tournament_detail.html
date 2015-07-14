@@ -43,7 +43,10 @@ href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css"{% endif %
 				<div id="team-list">
 					<ul>
 						{% for team in teams %}
-						<li>{{ team.name }}{% if team.short_name %} ({{ team.short_name }}){% endif %}</li>
+						<li>
+							<p class="h4">{{ team.name }}{% if team.short_name %} ({{ team.short_name }}){% endif %}</p>
+							<p>{{ team.member_names|join:", " }}</p>
+						</li>
 						{% endfor %}
 					</ul>
 				</div>

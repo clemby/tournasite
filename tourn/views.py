@@ -37,17 +37,20 @@ class MessageView(generic.TemplateView):
 class TournamentDetail(generic.View):
     template_name = 'tourn/tournament_detail.html'
 
+    def get_team_dict(self, entry):
+        members = list(entry.players.values('username', 'id'))
+        member_names = [member['username'] for member in members]
+        return {
+            'name': entry.team.name,
+            'short_name': entry.team.short_name,
+            'id': entry.team.id,
+            'members': members,
+            'member_names': member_names,
+        }
+
     def get_team_list(self, tournament):
         entries = TeamEntry.objects.filter(tournament=tournament)
-        return [
-            {
-                'name': entry.team.name,
-                'short_name': entry.team.short_name,
-                'id': entry.team.id,
-                'members': list(entry.players.values('username', 'id')),
-            }
-            for entry in entries
-        ]
+        return [self.get_team_dict(entry) for entry in entries]
 
     def get_match_list(self, tournament):
         matches = Match.objects.filter(tournament=tournament)
